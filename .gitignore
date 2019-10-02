@@ -1,0 +1,5 @@
+.idea/
+.data/
+__pycache__/
+*.bak
+*checkpoint.ipynb

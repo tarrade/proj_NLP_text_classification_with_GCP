@@ -55,14 +55,14 @@ dependencies:
 - google-pasta=0.1.7
 - google-resumable-media=0.3.3
 - googleapis-common-protos=1.6.0
-- tensorflow-hub=0.6.0
-- tensorflow-datasets=1.2.0
 - pip:
   - tensorflow==2.0.0
-  - tensorflow-addons==0.5.2
-  - tensorflow-text==1.0.0b2
+  - tensorflow-hub==0.6.0
+  - tensorflow-datasets==1.2.0
+  #- tensorflow-addons==0.5.2
+  #- tensorflow-text==1.0.0b2
   - tf-explain==0.0.2a0
-  - tfx==0.14.0
+  #- tfx==0.14.0
   - xgboost==0.90
   - apache-beam[gcp]
   - google-cloud-dlp==0.12.1
@@ -76,4 +76,3 @@ dependencies:
   #- "https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-2.1.0/de_core_news_sm-2.1.0.tar.gz#egg=de_core_news_sm==2.1.0"
   #- "https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-2.1.0/fr_core_news_sm-2.1.0.tar.gz#egg=fr_core_news_sm==2.1.0"
   #- "https://github.com/explosion/spacy-models/releases/download/it_core_news_sm-2.1.0/it_core_news_sm-2.1.0.tar.gz#egg=it_core_news_sm==2.1.0"
-
