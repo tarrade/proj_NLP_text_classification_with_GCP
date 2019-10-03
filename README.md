@@ -62,3 +62,6 @@ This will provide you a unique list of python packages needed to run the code
    
     jupyter lab build
 ```
+
+- start Jupyter Lab where is the env 'jupyter-notebook' activated
+  ```jupyter lab```
