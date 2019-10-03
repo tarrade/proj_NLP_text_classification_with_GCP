@@ -13,9 +13,11 @@ dependencies:
 - jupyter_nbextensions_configurator
 - jupyter_contrib_nbextensions
 - jupyterlab-git
+- jupyterlab_code_formatter
 - six
 - autopep8
 - pep8
+- black
 - nbdime
 - pip
 - pip:

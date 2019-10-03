@@ -34,7 +34,7 @@ This will provide you a unique list of python packages needed to run the code
   ```conda activate jupyter-notebook```
   
 - install jupyter extension
-```jupyter labextension list  
+```jupyter labextension list
        
     npm set strict-ssl false   
        
@@ -48,30 +48,17 @@ This will provide you a unique list of python packages needed to run the code
     jupyter labextension install jupyterlab_bokeh   
     jupyter labextension install @jupyterlab/toc   
     jupyter labextension install @aquirdturtle/collapsible_headings   
-    
     jupyter labextension install jupyterlab-jupytext   
     jupyter labextension install jupyterlab-cpustatus   
     jupyter labextension install jupyterlab-python-file   
     jupyter labextension install jupyterlab_toastify jupyterlab_conda   
     jupyter labextension install @ijmbarr/jupyterlab_spellchecker   
     jupyter labextension install @lckr/jupyterlab_variableinspector   
-    jupyter labextension install nbdime-jupyterlab   
-       
-       
+    jupyter labextension install nbdime-jupyterlab
+    jupyter labextension install @ryantam626/jupyterlab_code_formatter   
+    jupyter serverextension enable --py jupyterlab_code_formatter
     jupyter contrib nbextension install   
     jupyter nbextensions_configurator enable
-    
-    
-    
-    
-    
-    conda install -c conda-forge black
-    jupyter labextension install @ryantam626/jupyterlab_code_formatter
-    conda install -c conda-forge jupyterlab_code_formatter
-    jupyter serverextension enable --py jupyterlab_code_formatter
-    
-    
-    
+   
     jupyter lab build
-
-test
+```
