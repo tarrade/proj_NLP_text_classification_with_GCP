@@ -1,6 +1,6 @@
-# Text Classification using NLP
-
-## Create the python conda env
+# Text Classification using NLP  
+ 
+## Create the python conda env  
 This will provide you a unique list of python packages needed to run the code
 - create a python env based on a list of packages from environment.yml  
   ```conda env create -f env/environment.yml```  
@@ -26,19 +26,20 @@ This will provide you a unique list of python packages needed to run the code
    - the following package in each env (this is the responsibility of the creator of the env to be sure it is in the env)  
    ```conda install ipykernel```  
 
-## Use JupyterLab  
-- create the python conda env to run Jupyter Lab (or Jupyter Notebook)
-  ```conda env create -f env/jupyter-notebook.yml```  
+## Use JupyterLab   
+- create the python conda env to run Jupyter Lab (or Jupyter Notebook)   
+  ```conda env create -f env/jupyter-notebook.yml```    
 
-- activate the env
-  ```conda activate jupyter-notebook```
+- activate the env  
+  ```conda activate jupyter-notebook```  
   
-- install jupyter extension
+- install jupyter extension  
 ```jupyter labextension list
        
     npm set strict-ssl false   
        
-    To see issues: jupyter labextension install @mflevine/jupyterlab_html --debug  
+    # To see issues:   
+    jupyter labextension install @mflevine/jupyterlab_html --debug  
       
     jupyter labextension install @jupyterlab/github   
     jupyter labextension install @jupyterlab/latex  
@@ -61,7 +62,10 @@ This will provide you a unique list of python packages needed to run the code
     jupyter nbextensions_configurator enable
    
     jupyter lab build
+
+    # you need to create this folder structure manually  
+    C:\Users\Cxxxxxx\AppData\Local\black\black\Cache\19.3b0
 ```
 
-- start Jupyter Lab where is the env 'jupyter-notebook' activated
-  ```jupyter lab```
+- start Jupyter Lab where is the env 'jupyter-notebook' activated  
+  ```jupyter lab```  
