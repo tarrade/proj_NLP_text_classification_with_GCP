@@ -57,9 +57,10 @@ This will provide you a unique list of python packages needed to run the code
     jupyter labextension install @lckr/jupyterlab_variableinspector   
     jupyter labextension install nbdime-jupyterlab
     jupyter labextension install @ryantam626/jupyterlab_code_formatter
+    -- not working start --
     jupyter labextension install @jupyterlab/jupyterlab-monaco
     jupyter labextension install jupyterlab-flake8
-  
+    -- not working end --
     jupyter serverextension enable --py jupyterlab_code_formatter
     jupyter contrib nbextension install   
     jupyter nbextensions_configurator enable
