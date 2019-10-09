@@ -18,6 +18,7 @@ dependencies:
 - autopep8
 - pep8
 - black
+- flake8
 - nbdime
 - pip
 - pip:
