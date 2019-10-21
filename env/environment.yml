@@ -40,6 +40,8 @@ dependencies:
 - pep8=1.7.1
 - pylama=7.7.1
 - bayesian-optimization=1.0.1
+- space=2.1.8
+- spacy-lookups-data=0.1.0
 - google-cloud-storage=1.19.0
 - google-cloud-bigquery=1.19.0
 - google-auth=1.6.3
@@ -59,6 +61,7 @@ dependencies:
   - tensorflow==2.0.0
   - tensorflow-hub==0.6.0
   - tensorflow-datasets==1.2.0
+  - bert-tensorflow==1.0.1
   #- tensorflow-addons==0.5.2
   #- tensorflow-text==1.0.0b2
   - tf-explain==0.0.2a0
