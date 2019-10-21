@@ -7,3 +7,5 @@ data/uncased_L-24_H-1024_A-16/
 __pycache__/
 *.bak
 *checkpoint.ipynb
+.DS_Store
+env/test.yml

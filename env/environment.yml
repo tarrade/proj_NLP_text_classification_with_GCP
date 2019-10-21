@@ -67,7 +67,7 @@ dependencies:
   - tf-explain==0.0.2a0
   #- tfx==0.14.0
   - xgboost==0.90
-  - apache-beam[gcp]
+  - apache-beam==2.16.0
   - google-cloud-dlp==0.12.1
   - google-cloud-pubsub==1.0.0
   - google-cloud-videointelligence==1.11.0
