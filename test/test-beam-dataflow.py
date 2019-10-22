@@ -7,11 +7,15 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import StandardOptions
 from apache_beam.options.pipeline_options import GoogleCloudOptions
 
+# export BUCKET_NAME=name_bucket_for_stackoverflow (where you can find /stackoverflow)
+# create sub folder on Cloud Storage: gs://{0}/stackoverflow/tmp and gs://{0}/stackoverflow/tmp/staging
+# sudo pip3 install -U -r requirements.txt
+
 # get all variables here
 os.environ['PROJECT_ID'] =  subprocess.run('gcloud config list project --format "value(core.project)"',
                                              shell=True, check=True,
                                              stdout=subprocess.PIPE).stdout.decode().replace('\n', '').replace('\r', '')
-os.environ['BUCKET_NAME'] = os.environ['PROJECT_ID']
+
 os.environ['REGION'] = subprocess.run('gcloud config get-value compute/region  2> /dev/null',
                                       shell=True, check=True,
                                       stdout=subprocess.PIPE).stdout.decode().replace('\n', '').replace('\r', '')
@@ -127,5 +131,6 @@ if __name__ == '__main__':
     preprocess()
 
 # Usage
-# python test-beam-dataflow.py --runner DataflowRunner
-# python test-beam-dataflow.py
+# python3 test-beam-dataflow.py --runner DataflowRunner
+# python3 test-beam-dataflow.py
+# python3 test-beam-dataflow.py --runner DataflowRunner --no_use_public_ips --subnetwork https://www.googleapis.com/compute/v1/projects/xxx/regions/europe-west1/subnetworks/yyyy --region=europe-west1 --zone=europe-west1-b
