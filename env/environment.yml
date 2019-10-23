@@ -67,7 +67,7 @@ dependencies:
 - googleapis-common-protos=1.6.0
 - pip:
   # data processing
-  - apache-beam==2.16.0
+  - apache-beam[gcp]==2.16.0
   # data visualization
   - facets-overview==1.0.0
   # machine learning
