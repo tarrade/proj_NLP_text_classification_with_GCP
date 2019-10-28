@@ -34,7 +34,6 @@ dependencies:
 - scikit-plot=0.3.7
 - scikit-optimize=0.5.2
 - bayesian-optimization=1.0.1
-- scikit-multilearn=0.2.0
 - networkx=2.3
 # machine learning - nlp
 - nltk=3.4.4
@@ -76,6 +75,7 @@ dependencies:
   - tensorflow-hub==0.6.0
   - tensorflow-datasets==1.2.0
   - tf-explain==0.0.2a0
+  - scikit-multilearn==0.2.0
   #- tensorflow-addons==0.5.2
   #- tensorflow-text==1.0.0b2
   # machine learning - nlp
