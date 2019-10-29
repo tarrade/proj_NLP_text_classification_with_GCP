@@ -1,0 +1,256 @@
+steps:
+
+# Copy config files
+- name: 'gcr.io/cloud-builders/git'
+  args: 
+  - 'clone'
+  - 'https://github.com/tarrade/proj_DL_models_and_pipelines_with_GCP'
+  id: Clone Github
+  
+# create timestamp
+#- name: 'debian'
+#  args: 
+#  - 'bash'
+#  - '-c' 
+#  - |
+#    echo 'export TEST=$(date -u +%Y-%m-%d-%H-%M)' >> ~/.bashr
+#  id: Create timestamp env variables
+
+  # Set and print env variables for its execution
+- name: 'debian'
+  args: 
+  - 'bash'
+  - 'check_env.sh'
+  env:
+  - 'PROJECT=$PROJECT_ID'
+  - 'NAME_INSTANCE=${_NAME_INSTANCE}'
+  - 'TAG=${_TAG}'
+  - 'DOCKERFILE=${_DOCKERFILE}'
+  - 'OWNER=${_OWNER}'
+  - 'NETWORK=${_NETWORK}'
+  - 'SUBNET=${_SUBNET}'
+  - 'BUCKET=${_BUCKET}'
+  id: Check env variables
+  dir: 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}'
+
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: 
+  - 'cp'
+  - 'gs://${_BUCKET}/scripts/known_hosts'
+  - 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/.'
+  id: Copy host for git
+
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: 
+  - 'cp'
+  - 'gs://${_BUCKET}/scripts/id_rsa.enc'
+  - 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/.'
+  id: Copy private encrypted key git
+
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: 
+  - 'cp'
+  - 'gs://${_BUCKET}/scripts/.gitconfig'
+  - 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/.'
+  id: Copy git config file
+
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: 
+  - 'cp'
+  - 'gs://${_BUCKET}/scripts/.condarc'
+  - 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/.'
+  id: Copy conda config file
+
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: 
+  - 'cp'
+  - 'gs://${_BUCKET}/scripts/pip.conf'
+  - 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/.'
+  id: Copy pip config file
+
+- name: 'debian'
+  args: 
+  - 'cp'
+  - 'proj_DL_models_and_pipelines_with_GCP/base.yml'
+  - 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/.'
+  id: Copy base env
+
+- name: 'debian'
+  args: 
+  - 'cp'
+  - 'proj_DL_models_and_pipelines_with_GCP/environment.yml'
+  - 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/.'
+  id: Copy env environment.yml
+
+- name: 'debian'
+  args: 
+  - 'cp'
+  - 'proj_DL_models_and_pipelines_with_GCP/environment_2_0.yml'
+  - 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/.'
+  id: Copy env environment_2_0.yml
+
+- name: 'debian'
+  args: 
+  - 'cp'
+  - 'proj_DL_models_and_pipelines_with_GCP/environment_2_0_nightly.yml'
+  - 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/.'
+  id: Copy env environment_2_0_nightly.yml
+
+# Decrypt the file containing the key
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - kms
+  - decrypt
+  - --ciphertext-file=proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/id_rsa.enc
+  - --plaintext-file=proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/id_rsa
+  - --location=global
+  - --keyring=fabien-keyring
+  - --key=github-key
+  #volumes:
+  #- name: 'ssh'
+  #  path: /root/.ssh
+  id: Decrypt the file containing the key
+
+# Set up git with key and domain
+- name: 'gcr.io/cloud-builders/git'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    chmod 600 proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/id_rsa
+    cat <<EOF >proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}/config
+    Hostname github.axa.com
+    IdentityFile /root/.ssh/id_rsa
+    EOF
+  #volumes:
+  #- name: 'ssh'
+  #  path: /root/.ssh
+  id: Set up git with key and domain
+
+- name: 'debian'
+  args: 
+  - 'ls'
+  - '-la'
+  id: List files after copy
+  dir: 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}'
+
+# Restore cache
+#- name: 'gcr.io/$PROJECT_ID/restore_cache'
+#  args:
+#  - '--bucket=gs://project-cache/'
+#  - '--key=gradle-$( checksum build.gradle )'
+#  waitFor: 
+#  - '-'
+#  id: Restore cache from gs
+
+# Build docker image with latest tag using cache
+#- name: 'gcr.io/cloud-builders/docker'
+#  entrypoint: 'bash'
+#  args:
+#  - '-c'
+#  - |
+#    docker pull gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest || exit 0
+
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'build'
+  - '-t'
+  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+  - '-t'
+  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+  #- '--cache-from'
+  #- 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+  - '.'
+  id: Build the Docker image
+  dir: 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}'
+
+# Build docker image with the tag
+#- name: 'gcr.io/cloud-builders/docker'
+#  args: 
+#  - 'build'
+#  - '-t'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+#  - '-t'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+#  - '.'
+#  id: Build the Docker image
+#  dir: 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}'
+
+# Push image in Container Registry with a tg
+- name: 'gcr.io/cloud-builders/docker'
+  args: 
+  - 'push'
+  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+  id: Push the image in ContainerRegistry
+
+# Push image in Container Registry with the tag latest 
+- name: 'gcr.io/cloud-builders/docker'
+  args: 
+  - 'push'
+  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+  env:
+    - 'DOCKER_DRIVER=overlay'
+  id: Push the image latest in ContainerRegistry
+
+- name: 'debian'
+  args: 
+  - 'ls'
+  - '-la'
+  id: List files
+  dir: 'proj_DL_models_and_pipelines_with_GCP/docker/${_DOCKERFILE}'
+
+# Create timestamp
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: sh
+  args: ['-c', 'date_test=$(date -u +%Y-%m-%d-%H-%M); echo $date_test>_DATE;echo $(cat _DATE)']
+  id: Create timestamp
+
+
+# Deploy (add , '--verbosity', 'debug' for more info)
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: bash
+  id: Deploy the AI Platform Notebook instance
+  args: 
+  - '-c'
+  - |
+    gcloud \
+    deployment-manager \
+    deployments \
+    create \
+    date-$(date -u +%Y-%m-%d-%H-%M)-${_NAME_INSTANCE} \
+    --template \
+    notebook-instance-optimized-template.jinja \
+    --properties \
+    network:${_NETWORK},subnet:${_SUBNET},container:gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG},owner-tag:${_OWNER} \
+  dir: 'proj_DL_models_and_pipelines_with_GCP/deployment'
+
+# Read timestamp
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: sh
+  args: ['-c', 'echo $(cat _DATE)']
+  id: Read timestamp
+
+# Save cache 
+#- name: 'gcr.io/$PROJECT_ID/save_cache'
+#  args:
+#  - '--bucket=gs://${_CACHE_BUCKET}'
+#  - '--key=build-cache-$( checksum build.gradle )-$( checksum cloudbuild.yaml )'
+#  - '--path=.gradle/caches'
+#  - '--path=.gradle/wrapper'
+#  waitFor:
+#  - Push the image in ContainerRegistry
+#  id: Store cache in gs
+
+substitutions:
+    _BUCKET: not-defined
+    _TAG: dev
+    _NAME_INSTANCE: test
+    _DOCKERFILE: derived-pytorch-cpu
+    _NETWORK: network
+    _SUBNET: subnet
+    _OWNER: name
+    _DATE: none
+    _CACHE_BUCKET: axa-ch-project-build-cache
+    _CONFIG_BUCKET: project-build-config 
+
+timeout: 2h00m0s
