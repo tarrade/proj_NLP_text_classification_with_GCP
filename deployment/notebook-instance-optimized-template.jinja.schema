@@ -9,25 +9,21 @@ imports:
 
 required:
 - network
-- subnet
 - container
 - owner-tag
 
 properties:
   zone:
     type: string
-    default: europe-west6-a
+    default: europe-west1-b
     description: Zone to run
   region:
     type: string
-    default: europe-west6
+    default: europe-west1
     description: Region to run
   network:
     type: string
     description: Network to use
-  subnet:
-    type: string
-    description: Subnet to use
   diskSizeGb:
     type: integer
     default: 80
@@ -53,7 +49,7 @@ properties:
     description: application tag
   network-tag:
     type: string
-    default: subnet
+    default: default
     description: network tag
   owner-tag:
     type: string

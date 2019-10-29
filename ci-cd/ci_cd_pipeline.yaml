@@ -17,8 +17,8 @@ steps:
   - 'TAG=${_TAG}'
   - 'DOCKERFILE=${_DOCKERFILE}'
   - 'OWNER=${_OWNER}'
-  - 'NETWORK=${_NETWORK}'
-  - 'SUBNET=${_SUBNET}'
+  #- 'NETWORK=${_NETWORK}'
+  #- 'SUBNET=${_SUBNET}'
   - 'BUCKET=${_BUCKET}'
   id: Check env variables
   dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
@@ -218,7 +218,7 @@ steps:
     --template \
     notebook-instance-optimized-template.jinja \
     --properties \
-    network:${_NETWORK},subnet:${_SUBNET},container:gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG},owner-tag:${_OWNER} \
+    container:gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG},owner-tag:${_OWNER} \
   dir: 'proj_NLP_text_classification_with_GCP/deployment'
 
 # Read timestamp
