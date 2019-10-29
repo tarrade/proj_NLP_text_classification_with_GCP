@@ -6,7 +6,6 @@ steps:
   - 'clone'
   - 'https://github.com/tarrade/proj_NLP_text_classification_with_GCP'
   id: Clone Github
-  
   # Set and print env variables for its execution
 - name: 'debian'
   args: 
