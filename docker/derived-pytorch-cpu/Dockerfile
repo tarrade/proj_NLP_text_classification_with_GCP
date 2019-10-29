@@ -24,8 +24,9 @@ RUN cd ai-platform-samples/notebooks/auto-shutdown && cp ./ashutdown /usr/local/
 # Adding the environment files in the docker image
 ADD base.yml base.yml
 ADD environment.yml environment.yml
-ADD environment_2_0.yml environment_2_0.yml
-ADD environment_2_0_nightly.yml environment_2_0_nightly.yml
+ADD environment_gcp.yml environment_gcp.yml
+#ADD environment_2_0.yml environment_2_0.yml
+#ADD environment_2_0_nightly.yml environment_2_0_nightly.yml
 
 # Update conda manager
 RUN conda update -n base conda -y
