@@ -43,7 +43,7 @@ RUN conda env update --file base.yml
 
 # Create env
 RUN conda env create -f environment.yml
-#RUN conda env create -f environment_2_0.yml
+RUN conda env create -f environment_gcp.yml
 #RUN conda env create -f environment_2_0_nightly.yml
 
 # Checking configuration and new created envs

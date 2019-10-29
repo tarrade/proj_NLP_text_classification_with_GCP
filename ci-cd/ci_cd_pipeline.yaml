@@ -71,30 +71,37 @@ steps:
 - name: 'debian'
   args: 
   - 'cp'
-  - 'proj_NLP_text_classification_with_GCP/base.yml'
+  - 'proj_NLP_text_classification_with_GCP/env/base.yml'
   - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
   id: Copy base env
 
 - name: 'debian'
   args: 
   - 'cp'
-  - 'proj_NLP_text_classification_with_GCP/environment.yml'
+  - 'proj_NLP_text_classification_with_GCP/env/environment.yml'
   - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
   id: Copy env environment.yml
 
 - name: 'debian'
-  args: 
+  args:
   - 'cp'
-  - 'proj_NLP_text_classification_with_GCP/environment_2_0.yml'
+  - 'proj_NLP_text_classification_with_GCP/env/environment_gcp.yml'
   - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
-  id: Copy env environment_2_0.yml
+  id: Copy env environment.yml
 
-- name: 'debian'
-  args: 
-  - 'cp'
-  - 'proj_NLP_text_classification_with_GCP/environment_2_0_nightly.yml'
-  - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
-  id: Copy env environment_2_0_nightly.yml
+###- name: 'debian'
+###  args:
+###  - 'cp'
+###  - 'proj_NLP_text_classification_with_GCP/environment_2_0.yml'
+###  - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
+###  id: Copy env environment_2_0.yml
+
+###- name: 'debian'
+###  args:
+###  - 'cp'
+###  - 'proj_NLP_text_classification_with_GCP/environment_2_0_nightly.yml'
+###  - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
+###  id: Copy env environment_2_0_nightly.yml
 
 #### Decrypt the file containing the key
 ###- name: 'gcr.io/cloud-builders/gcloud'
