@@ -1,0 +1,68 @@
+info:
+  title: Notebook Template
+  author: Fabien Tarrade
+  description: Creates a JupyterLab instance
+  version: 1.0
+
+imports:
+- path: notebook-instance-optimized-template.jinja
+
+required:
+- network
+- subnet
+- container
+- owner-tag
+
+properties:
+  zone:
+    type: string
+    default: europe-west6-a
+    description: Zone to run
+  region:
+    type: string
+    default: europe-west6
+    description: Region to run
+  network:
+    type: string
+    description: Network to use
+  subnet:
+    type: string
+    description: Subnet to use
+  diskSizeGb:
+    type: integer
+    default: 80
+    description: disk size to use
+  machineTypes:
+    type: string
+    default: n1-standard-1
+    description: machineTypes to use
+  image:
+    type: string
+    default: common-container
+    description: image to use
+  framework:
+    type: string
+    default: Container
+    description: framework to use
+  container:
+    type: string
+    description: container to use
+  application-tag:
+    type: string
+    default: notebook-familly-derived-image
+    description: application tag
+  network-tag:
+    type: string
+    default: subnet
+    description: network tag
+  owner-tag:
+    type: string
+    description: owner tag
+  type-tag:
+    type: string
+    default: production
+    description: type tag
+  creation-tag:
+    type: string
+    default: jinja
+    description: type tag
