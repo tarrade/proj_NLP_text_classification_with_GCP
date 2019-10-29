@@ -154,9 +154,9 @@ ADD .gitconfig /root/.gitconfig
 RUN git config --list
 # Adding the config file to read entrerise Github
 RUN mkdir -p /root/.ssh/
-ADD known_hosts /root/.ssh/known_hosts
-ADD id_rsa /root/.ssh/id_rsa
-ADD config /root/.ssh/config
+#ADD known_hosts /root/.ssh/known_hosts
+#ADD id_rsa /root/.ssh/id_rsa
+#ADD config /root/.ssh/config
 
 # Add the copy from /root to /home
 RUN sed -i '1 a cp -r /root/.conda-env /home/.conda-env' /entrypoint.sh

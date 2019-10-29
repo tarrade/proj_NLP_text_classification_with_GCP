@@ -247,7 +247,7 @@ substitutions:
     _SUBNET: subnet
     _OWNER: name
     _DATE: none
-    _CACHE_BUCKET: axa-ch-project-build-cache
-    _CONFIG_BUCKET: project-build-config 
+    _CACHE_BUCKET: none
+    _CONFIG_BUCKET: none
 
 timeout: 2h00m0s
