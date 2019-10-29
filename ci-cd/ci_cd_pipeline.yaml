@@ -87,7 +87,7 @@ steps:
   - 'cp'
   - 'proj_NLP_text_classification_with_GCP/env/environment_gcp.yml'
   - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
-  id: Copy env environment.yml
+  id: Copy env old environment.yml
 
 ###- name: 'debian'
 ###  args:
