@@ -148,18 +148,18 @@ steps:
 #  - |
 #    docker pull gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest || exit 0
 
-- name: 'gcr.io/cloud-builders/docker'
-  args:
-  - 'build'
-  - '-t'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
-  - '-t'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
-  #- '--cache-from'
-  #- 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
-  - '.'
-  id: Build the Docker image
-  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'build'
+#  - '-t'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+#  - '-t'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+#  #- '--cache-from'
+#  #- 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+#  - '.'
+#  id: Build the Docker image
+#  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
 # Build docker image with the tag
 #- name: 'gcr.io/cloud-builders/docker'
@@ -174,20 +174,20 @@ steps:
 #  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
 # Push image in Container Registry with a tg
-- name: 'gcr.io/cloud-builders/docker'
-  args: 
-  - 'push'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
-  id: Push the image in ContainerRegistry
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'push'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+#  id: Push the image in ContainerRegistry
 
 # Push image in Container Registry with the tag latest 
-- name: 'gcr.io/cloud-builders/docker'
-  args: 
-  - 'push'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
-  env:
-    - 'DOCKER_DRIVER=overlay'
-  id: Push the image latest in ContainerRegistry
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'push'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+#  env:
+#    - 'DOCKER_DRIVER=overlay'
+#  id: Push the image latest in ContainerRegistry
 
 - name: 'debian'
   args: 

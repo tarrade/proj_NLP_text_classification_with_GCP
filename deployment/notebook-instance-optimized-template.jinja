@@ -14,6 +14,8 @@ resources:
         diskSizeGb: {{properties["diskSizeGb"]}}
         sourceImage: projects/deeplearning-platform-release/global/images/family/{{properties["image"]}}
     networkInterfaces:
+    - network: projects/nlp-text-classification/global/networks/default
+    - subnetwork: projects/{{properties["network"]}}/regions/{{properties["region"]}}/subnetworks/default
       accessConfigs:
       - name: External NAT
         type: ONE_TO_ONE_NAT
@@ -21,7 +23,7 @@ resources:
         items:
         - key: post-startup-script
           value: |
-            gs://nlp-text-classification/scripts/auto-shutdown-scrip.sh
+            gs://proj_NLP_text_classification_with_GCP/scripts/auto-shutdown-scrip.sh
         - key: framework
           value: {{properties["framework"]}}
         - key: proxy-mode
