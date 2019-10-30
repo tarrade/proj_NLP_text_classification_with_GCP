@@ -218,7 +218,7 @@ steps:
     --template \
     notebook-instance-optimized-template.jinja \
     --properties \
-    container:gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG},owner-tag:${_OWNER} \
+    network:${_NETWORK},container:gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG},owner-tag:${_OWNER} \
   dir: 'proj_NLP_text_classification_with_GCP/deployment'
 
 # Read timestamp
@@ -243,8 +243,7 @@ substitutions:
     _TAG: dev
     _NAME_INSTANCE: test
     _DOCKERFILE: derived-pytorch-cpu
-    _NETWORK: network
-    _SUBNET: subnet
+    _NETWORK: default
     _OWNER: name
     _DATE: none
     _CACHE_BUCKET: none
