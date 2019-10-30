@@ -74,6 +74,13 @@ steps:
   id: Copy env old environment.yml
 
 
+# Check the config of Docker
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'info'
+  id: Check the config of Docker
+
+
 # Restore cache
 #- name: 'gcr.io/$PROJECT_ID/restore_cache'
 #  args:
@@ -116,6 +123,23 @@ steps:
   - '.'
   id: Build the Docker image
   dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
+
+
+# Describe images
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'image'
+  - 'inspect'
+  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+  id: Describe the images
+
+
+# Check sizes of the images
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'images'
+  - '-a'
+  id: Check sizes of the images
 
 
 # Push image in Container Registry with a tag

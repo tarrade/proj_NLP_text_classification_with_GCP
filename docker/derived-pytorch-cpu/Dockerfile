@@ -1,5 +1,4 @@
 # Specify the base image and tag
-#FROM gcr.io/deeplearning-platform-release/pytorch-cpu:m27
 FROM gcr.io/deeplearning-platform-release/pytorch-cpu:m34
 
 # Checking the type of machine
@@ -16,15 +15,15 @@ ENV SHELL /bin/bash
 RUN echo $0
 
 ## Auto Shutdown On Idle
-RUN apt-get update && apt-get install -y sysstat bc
-RUN git clone --branch auto_shutdown https://github.com/b0noI/ai-platform-samples.git
-RUN cd ai-platform-samples/notebooks/auto-shutdown && cp ./ashutdown /usr/local/bin/ && cp ./ashutdown.service /lib/systemd/system/
+#RUN apt-get update && apt-get install -y sysstat bc
+#RUN git clone --branch auto_shutdown https://github.com/b0noI/ai-platform-samples.git
+#RUN cd ai-platform-samples/notebooks/auto-shutdown && cp ./ashutdown /usr/local/bin/ && cp ./ashutdown.service /lib/systemd/system/
 
 ## Creating conda env
 # Adding the environment files in the docker image
 ADD base.yml base.yml
-ADD environment.yml environment.yml
-ADD environment_gcp.yml environment_gcp.yml
+#ADD environment.yml environment.yml
+#ADD environment_gcp.yml environment_gcp.yml
 #ADD environment_2_0.yml environment_2_0.yml
 #ADD environment_2_0_nightly.yml environment_2_0_nightly.yml
 
@@ -43,8 +42,8 @@ RUN conda config --add envs_dirs /root/.conda-env/
 RUN conda env update --file base.yml
 
 # Create env
-RUN conda env create -f environment.yml
-RUN conda env create -f environment_gcp.yml
+#RUN conda env create -f environment.yml
+#RUN conda env create -f environment_gcp.yml
 #RUN conda env create -f environment_2_0_nightly.yml
 
 # Checking configuration and new created envs
@@ -153,13 +152,13 @@ ADD .gitconfig /root/.gitconfig
 # Check that the config file was created properly
 RUN git config --list
 # Adding the config file to read entrerise Github
-RUN mkdir -p /root/.ssh/
+#RUN mkdir -p /root/.ssh/
 #ADD known_hosts /root/.ssh/known_hosts
 #ADD id_rsa /root/.ssh/id_rsa
 #ADD config /root/.ssh/config
 
 # Add the copy from /root to /home
-RUN sed -i '1 a cp -r /root/.conda-env /home/.conda-env' /entrypoint.sh
+RUN sed -i '1 a cp -r /root/.conda-env/env* /home/.conda-env/.' /entrypoint.sh
 RUN cat  /entrypoint.sh
 RUN sed -i '1 a jupyter serverextension list\nconda list nb_conda_kernels\nconda env list' /run_jupyter.sh
 RUN cat  /run_jupyter.sh
