@@ -138,7 +138,6 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args:
   - 'images'
-  - '-a'
   id: Check sizes of the images
 
 

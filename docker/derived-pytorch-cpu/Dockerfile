@@ -33,6 +33,7 @@ RUN conda update -n base conda -y
 # Define a folder to store env
 RUN mkdir -p /root/.conda-env/
 RUN mkdir -p /home/.conda-env/
+RUN mkdir -p /home/.conda-pkg/
 
 # Create config files
 RUN conda config --add channels conda-forge
