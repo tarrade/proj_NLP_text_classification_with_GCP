@@ -24,6 +24,9 @@ properties:
   network:
     type: string
     description: Network to use
+  bucketName:
+    type: string
+    description: name of the bucket
   diskSizeGb:
     type: integer
     default: 80

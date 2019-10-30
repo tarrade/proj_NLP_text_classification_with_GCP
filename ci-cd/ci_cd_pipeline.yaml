@@ -218,7 +218,7 @@ steps:
     --template \
     notebook-instance-optimized-template.jinja \
     --properties \
-    network:${_NETWORK},container:gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG},owner-tag:${_OWNER} \
+    network:${_NETWORK},bucketName:${_BUCKET},container:gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG},owner-tag:${_OWNER} \
   dir: 'proj_NLP_text_classification_with_GCP/deployment'
 
 # Read timestamp

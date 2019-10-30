@@ -22,7 +22,7 @@ resources:
         items:
         - key: post-startup-script
           value: |
-            gs://{{env["project"]}}/scripts/auto-shutdown-scrip.sh
+            gs://{{properties["bucketName"]}}/scripts/auto-shutdown-scrip.sh
         - key: framework
           value: {{properties["framework"]}}
         - key: proxy-mode
