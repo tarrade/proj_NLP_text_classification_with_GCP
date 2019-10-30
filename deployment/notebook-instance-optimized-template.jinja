@@ -14,8 +14,7 @@ resources:
         diskSizeGb: {{properties["diskSizeGb"]}}
         sourceImage: projects/deeplearning-platform-release/global/images/family/{{properties["image"]}}
     networkInterfaces:
-    - network: projects/nlp-text-classification/global/networks/default
-    - subnetwork: projects/{{properties["network"]}}/regions/{{properties["region"]}}/subnetworks/default
+    - subnetwork: projects/nlp-text-classification/regions/{{properties["region"]}}/subnetworks/default
       accessConfigs:
       - name: External NAT
         type: ONE_TO_ONE_NAT
