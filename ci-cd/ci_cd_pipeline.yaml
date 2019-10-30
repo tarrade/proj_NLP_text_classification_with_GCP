@@ -1,12 +1,15 @@
 steps:
 
+
 # Copy config files
 - name: 'gcr.io/cloud-builders/git'
   args: 
   - 'clone'
   - 'https://github.com/tarrade/proj_NLP_text_classification_with_GCP'
   id: Clone Github
-  # Set and print env variables for its execution
+
+
+# Set and print env variables for its execution
 - name: 'debian'
   args: 
   - 'bash'
@@ -17,25 +20,11 @@ steps:
   - 'TAG=${_TAG}'
   - 'DOCKERFILE=${_DOCKERFILE}'
   - 'OWNER=${_OWNER}'
-  #- 'NETWORK=${_NETWORK}'
-  #- 'SUBNET=${_SUBNET}'
+  - 'NETWORK=${_NETWORK}'
   - 'BUCKET=${_BUCKET}'
   id: Check env variables
   dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
-###- name: 'gcr.io/cloud-builders/gsutil'
-###  args:
-###  - 'cp'
-###  - 'gs://${_BUCKET}/scripts/known_hosts'
-###  - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
-###  id: Copy host for git
-
-###- name: 'gcr.io/cloud-builders/gsutil'
-###  args:
-###  - 'cp'
-###  - 'gs://${_BUCKET}/scripts/id_rsa.enc'
-###  - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
-###  id: Copy private encrypted key git
 
 - name: 'gcr.io/cloud-builders/gsutil'
   args: 
@@ -44,12 +33,14 @@ steps:
   - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
   id: Copy git config file
 
+
 - name: 'gcr.io/cloud-builders/gsutil'
   args: 
   - 'cp'
   - 'gs://${_BUCKET}/scripts/.condarc'
   - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
   id: Copy conda config file
+
 
 - name: 'gcr.io/cloud-builders/gsutil'
   args: 
@@ -58,12 +49,14 @@ steps:
   - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
   id: Copy pip config file
 
+
 - name: 'debian'
   args: 
   - 'cp'
   - 'proj_NLP_text_classification_with_GCP/env/base.yml'
   - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
   id: Copy base env
+
 
 - name: 'debian'
   args: 
@@ -72,6 +65,7 @@ steps:
   - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
   id: Copy env environment.yml
 
+
 - name: 'debian'
   args:
   - 'cp'
@@ -79,57 +73,6 @@ steps:
   - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
   id: Copy env old environment.yml
 
-###- name: 'debian'
-###  args:
-###  - 'cp'
-###  - 'proj_NLP_text_classification_with_GCP/environment_2_0.yml'
-###  - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
-###  id: Copy env environment_2_0.yml
-
-###- name: 'debian'
-###  args:
-###  - 'cp'
-###  - 'proj_NLP_text_classification_with_GCP/environment_2_0_nightly.yml'
-###  - 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/.'
-###  id: Copy env environment_2_0_nightly.yml
-
-#### Decrypt the file containing the key
-###- name: 'gcr.io/cloud-builders/gcloud'
-###  args:
-###  - kms
-###  - decrypt
-###  - --ciphertext-file=proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/id_rsa.enc
-###  - --plaintext-file=proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/id_rsa
-###  - --location=global
-###  - --keyring=fabien-keyring
-###  - --key=github-key
-###  #volumes:
-###  #- name: 'ssh'
-###  #  path: /root/.ssh
-###  id: Decrypt the file containing the key
-
-### Set up git with key and domain
-###- name: 'gcr.io/cloud-builders/git'
-###  entrypoint: 'bash'
-###  args:
-###  - '-c'
-###  - |
-###    chmod 600 proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/id_rsa
-###    cat <<EOF >proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}/config
-###    Hostname github.axa.com
-###    IdentityFile /root/.ssh/id_rsa
-###    EOF
-###  #volumes:
-###  #- name: 'ssh'
-###  #  path: /root/.ssh
-###  id: Set up git with key and domain
-
-- name: 'debian'
-  args: 
-  - 'ls'
-  - '-la'
-  id: List files after copy
-  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
 # Restore cache
 #- name: 'gcr.io/$PROJECT_ID/restore_cache'
@@ -140,6 +83,7 @@ steps:
 #  - '-'
 #  id: Restore cache from gs
 
+
 # Build docker image with latest tag using cache
 #- name: 'gcr.io/cloud-builders/docker'
 #  entrypoint: 'bash'
@@ -147,54 +91,50 @@ steps:
 #  - '-c'
 #  - |
 #    docker pull gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest || exit 0
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'build'
+  - '-t'
+  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+  - '-t'
+  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+  #- '--cache-from'
+  #- 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+  - '.'
+  id: Build the Docker image
+  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
-#- name: 'gcr.io/cloud-builders/docker'
-#  args:
-#  - 'build'
-#  - '-t'
-#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
-#  - '-t'
-#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
-#  #- '--cache-from'
-#  #- 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
-#  - '.'
-#  id: Build the Docker image
-#  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
 # Build docker image with the tag
-#- name: 'gcr.io/cloud-builders/docker'
-#  args: 
-#  - 'build'
-#  - '-t'
-#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
-#  - '-t'
-#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
-#  - '.'
-#  id: Build the Docker image
-#  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'build'
+  - '-t'
+  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+  - '-t'
+  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+  - '.'
+  id: Build the Docker image
+  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
-# Push image in Container Registry with a tg
-#- name: 'gcr.io/cloud-builders/docker'
-#  args:
-#  - 'push'
-#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
-#  id: Push the image in ContainerRegistry
+
+# Push image in Container Registry with a tag
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'push'
+  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+  id: Push the image in ContainerRegistry
+
 
 # Push image in Container Registry with the tag latest 
-#- name: 'gcr.io/cloud-builders/docker'
-#  args:
-#  - 'push'
-#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
-#  env:
-#    - 'DOCKER_DRIVER=overlay'
-#  id: Push the image latest in ContainerRegistry
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'push'
+  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+  env:
+    - 'DOCKER_DRIVER=overlay'
+  id: Push the image latest in ContainerRegistry
 
-- name: 'debian'
-  args: 
-  - 'ls'
-  - '-la'
-  id: List files
-  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
 # Create timestamp
 - name: 'gcr.io/cloud-builders/gcloud'
@@ -221,11 +161,13 @@ steps:
     network:${_NETWORK},bucketName:${_BUCKET},container:gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG},owner-tag:${_OWNER} \
   dir: 'proj_NLP_text_classification_with_GCP/deployment'
 
+
 # Read timestamp
 - name: 'gcr.io/cloud-builders/gcloud'
   entrypoint: sh
   args: ['-c', 'echo $(cat _DATE)']
   id: Read timestamp
+
 
 # Save cache 
 #- name: 'gcr.io/$PROJECT_ID/save_cache'
@@ -237,6 +179,7 @@ steps:
 #  waitFor:
 #  - Push the image in ContainerRegistry
 #  id: Store cache in gs
+
 
 substitutions:
     _BUCKET: not-defined
