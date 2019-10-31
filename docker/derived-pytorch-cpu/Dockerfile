@@ -133,7 +133,7 @@ RUN echo $HOME
 RUN chmod +x /entrypoint.sh
 
 # drop local conda-env canal
-conda config --remove envs_dirs /root/.conda-env/
+RUN conda config --remove envs_dirs /root/.conda-env/
 
 # Activate conda
 RUN conda init bash && . /root/.bashrc && conda info -e # && conda activate base
