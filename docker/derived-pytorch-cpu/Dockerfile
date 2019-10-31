@@ -144,7 +144,7 @@ RUN conda init bash && . /root/.bashrc && conda info -e # && conda activate base
 ADD .condarc /.condarc
 ENV CONDARC /.condarc
 
-RUN MORE .condarc
+RUN more /.condarc
 
 # drop local conda-env canal
 RUN conda config --remove envs_dirs /root/.conda-env/
