@@ -132,10 +132,6 @@ RUN echo $HOME
 # set the right permission
 RUN chmod +x /entrypoint.sh
 
-# drop local conda-env canal
-RUN conda config --remove envs_dirs /root/.conda-env/
-#RUN conda config --remove envs_dirs /root/.conda/envs/
-
 # Activate conda
 RUN conda init bash && . /root/.bashrc && conda info -e # && conda activate base
 
@@ -147,6 +143,12 @@ RUN conda init bash && . /root/.bashrc && conda info -e # && conda activate base
 # Setup the proxy server for conda
 ADD .condarc /.condarc
 ENV CONDARC /.condarc
+
+RUN MORE .condarc
+
+# drop local conda-env canal
+RUN conda config --remove envs_dirs /root/.conda-env/
+RUN conda config --remove envs_dirs /root/.conda/envs/
 
 # Setup the proxy server for pip
 ADD pip.conf /pip.conf
