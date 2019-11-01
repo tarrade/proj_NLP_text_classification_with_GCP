@@ -163,7 +163,6 @@ RUN git config --list
 
 # Add the copy from /root to /home
 RUN sed -i '1 a cp -r /root/.conda-env/env* /home/.conda-env/.' /entrypoint.sh
-RUN sed -i -e "\$aconda config --remove envs_dirs /root/.conda/envs" /entrypoint.sh
 RUN cat  /entrypoint.sh
 RUN sed -i '1 a jupyter serverextension list\nconda list nb_conda_kernels\nconda env list' /run_jupyter.sh
 RUN cat  /run_jupyter.sh
