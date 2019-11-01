@@ -1,0 +1,14 @@
+conda create -n temp python=3.6.9 ipykernel
+
+conda activate temp
+
+export BUCKET_NAME='xxx'
+
+pip install -U -r requirements.txt
+
+# Direct runner (local)
+python test-beam-dataflow.py 
+
+# Dataflow runner (on GCP)
+python test-beam-dataflow.py --runner DataflowRunner
+
