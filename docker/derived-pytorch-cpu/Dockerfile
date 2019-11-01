@@ -165,7 +165,7 @@ RUN git config --list
 RUN sed -i '1 a cp -r /root/.conda-env/env* /home/.conda-env/.' /entrypoint.sh
 RUN cat  /entrypoint.sh
 # Running some checks about kernels
-RUN sed -i '1 a jupyter serverextension list\nconda list nb_conda_kernels\nconda env list' /run_jupyter.sh
+RUN sed -i '1 a if [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nfi\njupyter serverextension list\nconda list nb_conda_kernels\nconda env list' /run_jupyter.sh
 RUN cat  /run_jupyter.sh
 # Adding option in jupyter notebook: display conda env, display hidden files
 RUN sed -i -e "\$ac.NotebookApp.kernel_spec_manager_class = 'nb_conda_kernels.manager.CondaKernelSpecManager'" /root/.jupyter/jupyter_notebook_config.py
