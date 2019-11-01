@@ -172,7 +172,7 @@ RUN sed -i -e "\$ac.NotebookApp.kernel_spec_manager_class = 'nb_conda_kernels.ma
 RUN sed -i -e "\$ac.ContentsManager.allow_hidden = True" /root/.jupyter/jupyter_notebook_config.py
 RUN cat /root/.jupyter/jupyter_notebook_config.py
 # Add execution of custom scripts it is exists
-RUN sed -i -e "\$aif [ -e /home/config.sh ]\nthen\n    bash /home/config.sh\nfi\n" /root/.bashrc
+RUN sed -i -e "\$aif [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nfi\n" /root/.bashrc
 RUN cat /root/.bashrc
 
 # Define entry points
