@@ -167,6 +167,7 @@ RUN cat  /entrypoint.sh
 RUN sed -i '1 a jupyter serverextension list\nconda list nb_conda_kernels\nconda env list' /run_jupyter.sh
 RUN cat  /run_jupyter.sh
 RUN sed -i -e "\$ac.NotebookApp.kernel_spec_manager_class = 'nb_conda_kernels.manager.CondaKernelSpecManager'" /root/.jupyter/jupyter_notebook_config.py
+RUN sed -i -e "\$ac.ContentsManager.allow_hidden = True" /root/.jupyter/jupyter_notebook_config.py
 RUN cat /root/.jupyter/jupyter_notebook_config.py
 
 # Define entry points
