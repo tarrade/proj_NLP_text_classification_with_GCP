@@ -75,10 +75,10 @@ dependencies:
   - tensorflow==2.0.0
   - tensorflow-hub==0.6.0
   - tensorflow-datasets==1.2.0
+  - tensorflow-text==2.0.0rc0
   - tf-explain==0.0.2a0
   - tensorflow_io
-  #- tensorflow-addons==0.5.2
-  #- tensorflow-text==1.0.0b2
+  - tensorflow-addons==0.6.0
   # machine learning - nlp
   - bert-tensorflow==1.0.1
   # machine learning - nlp
