@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 import subprocess
 import datetime
@@ -42,13 +43,21 @@ def create_query():
     """
 
     return query
-
-
+    
 table_schema = {'fields': [
     {'name': 'id', 'type': 'NUMERIC', 'mode': 'REQUIRED'},
-    {'name': 'title', 'type': 'ARRAY', 'mode': 'NULLABLE'},
-    {'name': 'body', 'type': 'ARRAY', 'mode': 'NULLABLE'},
-    {'name': 'tags', 'type': 'ARRAY', 'mode': 'NULLABLE'},
+    {'name': 'title', 'type': 'STRING', 'mode': 'NULLABLE'},
+    {'name': 'body', 'type': 'STRING', 'mode': 'NULLABLE'},
+    
+    {"fields": [
+        {"mode": "NULLABLE", 
+         "name": "value", 
+         "type": "STRING"}
+    ], 
+            "mode": "REPEATED", 
+            "name": "tags", 
+            "type": "RECORD"
+    }
 ]}
 
 class CleanText(beam.DoFn):
@@ -64,6 +73,7 @@ class CleanText(beam.DoFn):
         """
         if self.spacy is None:
             self.spacy = spacy.load('en_core_web_sm')
+            print('MyLogs: using python {} and beam{}'.format(sys.version, beam.__version__))
         
     def __decode_html(self, input_str: str) -> str:
         self.soup = bs4.BeautifulSoup(input_str, 'html.parser')
@@ -81,15 +91,18 @@ class CleanText(beam.DoFn):
         return tags.split('|')
 
     def process(self, element):
-        self.title_array = element['title'] # self.__nlp(element['title'])
-        #self.body_decoded = element['tags'] #self.__decode_html(element['tags'])
-        self.body_array = element['body']   #self.__nlp(self.body_decoded)
-        self.tag_array = element['tags']    #self.__split_tags(element['tags'])
+        self.title_array = self.__nlp(element['title'])
+        self.body_array = self.__nlp(self.__decode_html(element['body']))
+        self.tag_array = self.__split_tags(element['tags'])
+        print('MyLogs: tittle {}'.format(self.title_array))
+        print('MyLogs: body {}'.format(self.body_array))
+        print('MyLogs: tags {}'.format(self.tag_array))  
         
-        return [{'id': element['id'], 
-                 'title': self.title_array, 
-                 'body': self.body_array, 
-                 'tags': self.tag_array}]
+        return [{'id': int(element['id']), 
+                 'title': ' '.join(self.title_array), 
+                 'body': ' '.join(self.body_array), 
+                 'tags': [{'value': i} for i in self.tag_array]
+                }]
 
 
 def preprocess():
@@ -118,10 +131,6 @@ def preprocess():
 
     # instantantiate Pipeline object using PipelineOptions
     print('Launching Dataflow job {} ... hang on'.format(job_name))
-    
-    #from setuptools import find_packages
-    #print(find_packages())
-    #exit(0)
 
     p = beam.Pipeline(options=options)
     table = p | 'Read from BigQuery' >> beam.io.Read(beam.io.BigQuerySource(
@@ -131,19 +140,19 @@ def preprocess():
         use_standard_sql=True)
         )
     clean_text = table | 'Clean Text' >> beam.ParDo(CleanText())
-    #output | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
-    #    # The table name is a required argument for the BigQuery
-    #    table='test_stackoverflow_beam',
-    #    dataset='test',
-    #    project=project,
-    #    # Here we use the JSON schema read in from a JSON file.
-    #    # Specifying the schema allows the API to create the table correctly if it does not yet exist.
-    #    schema=table_schema,
-    #    # Creates the table in BigQuery if it does not yet exist.
-    #    create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
-    #    # Deletes all data in the BigQuery table before writing.
-    #    write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE)
-    #    # not needed, from with clause
+    clean_text | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
+        # The table name is a required argument for the BigQuery
+        table='test_stackoverflow_beam_nlp',
+        dataset='test',
+        project=project,
+        # Here we use the JSON schema read in from a JSON file.
+        # Specifying the schema allows the API to create the table correctly if it does not yet exist.
+        schema=table_schema,
+        # Creates the table in BigQuery if it does not yet exist.
+        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
+        # Deletes all data in the BigQuery table before writing.
+        write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE)
+        # not needed, from with clause
 
     if options.view_as(StandardOptions).runner == 'DataflowRunner':
         print('DataflowRunner')
