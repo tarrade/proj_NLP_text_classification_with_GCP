@@ -67,8 +67,10 @@ dependencies:
 - pip:
   # data processing
   - apache-beam[gcp]==2.16.0
+  - bs4==0.0.1
   # data visualization
   - facets-overview==1.0.0
+  - pandas-profiling==2.3.0
   # machine learning
   - scikit-multilearn==0.2.0
   - xgboost==0.90
