@@ -6,6 +6,7 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import StandardOptions
 from apache_beam.options.pipeline_options import GoogleCloudOptions
+from apache_beam.options.pipeline_options import SetupOptions
 
 print(os.environ['PROJECT_ID'])
 print(os.environ['BUCKET_NAME'])
@@ -76,7 +77,7 @@ def preprocess():
     google_cloud_options.staging_location = os.path.join(output_dir, 'tmp', 'staging')
     google_cloud_options.temp_location = os.path.join(output_dir, 'tmp')
     # done by command line
-    options.view_as(StandardOptions).runner = RUNNER
+    #options.view_as(StandardOptions).runner = RUNNER
     options.view_as(SetupOptions).setup_file=os.environ['DIR_PROJ']+'/setup.py'
 
     # instantantiate Pipeline object using PipelineOptions
