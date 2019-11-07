@@ -13,7 +13,7 @@ setup(
     author = 'F. Tarrade',
     author_email = 'fabien.tarrade@gmail.com',
     install_requires=REQUIRED_PACKAGES,
-    #packages=find_packages(),
-    #include_package_data=True,
-    description='Basic env to do NLP preprocessing'
+    packages=find_packages(),
+    include_package_data=True,
+    description='Classification of Stackoverflow post using NLP on GCP'
 )
