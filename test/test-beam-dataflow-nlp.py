@@ -1,25 +1,6 @@
 import sys
 import os
 import pathlib
-
-workingdir=os.getcwd()
-#print(workingdir)
-d=[d for d in os.listdir(workingdir)]
-n=0
-while not set(['notebook']).issubset(set(d)):
-    workingdir=str(pathlib.Path(workingdir).parents[0])
-    #print(workingdir)
-    
-    
-    
-    
-    d=[d for d in os.listdir(str(workingdir))]
-    n+=1
-    if n>5:
-        break
-sys.path.insert(0, workingdir)
-
-
 import logging
 import subprocess
 import datetime
@@ -28,15 +9,6 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import StandardOptions
 from apache_beam.options.pipeline_options import GoogleCloudOptions
 import src.preprocessing.preprocessing as pp
-
-# get all variables here
-os.environ['PROJECT_ID'] =  subprocess.run('gcloud config list project --format "value(core.project)"',
-                                             shell=True, check=True,
-                                             stdout=subprocess.PIPE).stdout.decode().replace('\n', '').replace('\r', '')
-
-os.environ['REGION'] = subprocess.run('gcloud config get-value compute/region  2> /dev/null',
-                                      shell=True, check=True,
-                                      stdout=subprocess.PIPE).stdout.decode().replace('\n', '').replace('\r', '')
 
 print(os.environ['PROJECT_ID'])
 print(os.environ['BUCKET_NAME'])
@@ -97,6 +69,7 @@ def preprocess():
     google_cloud_options.temp_location = os.path.join(output_dir, 'tmp')
     # done by command line
     #options.view_as(StandardOptions).runner = RUNNER
+    options.view_as(SetupOptions).setup_file=os.environ['DIR_PROJ']+'/setup.py'
 
     # instantantiate Pipeline object using PipelineOptions
     print('Launching Dataflow job {} ... hang on'.format(job_name))

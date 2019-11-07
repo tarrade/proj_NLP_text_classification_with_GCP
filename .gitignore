@@ -10,3 +10,4 @@ __pycache__/
 .DS_Store
 env/test.yml
 *.egg-info
+core
