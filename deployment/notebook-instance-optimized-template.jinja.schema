@@ -33,7 +33,7 @@ properties:
     description: disk size to use
   machineTypes:
     type: string
-    default: n1-standard-1
+    default: n1-standard-2
     description: machineTypes to use
   image:
     type: string
