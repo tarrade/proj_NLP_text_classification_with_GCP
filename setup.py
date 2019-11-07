@@ -8,7 +8,7 @@ REQUIRED_PACKAGES = ['apache-beam[gcp]==2.16.0',
                      ]
 
 setup(
-    name='preprocessing_v1',
+    name='NLP_text_classification_with_GCP',
     version='0.1',
     author = 'F. Tarrade',
     author_email = 'fabien.tarrade@gmail.com',
