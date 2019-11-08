@@ -185,11 +185,10 @@ steps:
 #  id: Push the image latest in ContainerRegistry
 # Push image in Container Registry with the tag latest
 - name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
   args:
     - '-c'
     - 'if [ ${_BUILD} == "true" ]; then push gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest ; fi'
-  env:
-    - 'DOCKER_DRIVER=overlay'
   id: Push the image latest in ContainerRegistry
 
 
