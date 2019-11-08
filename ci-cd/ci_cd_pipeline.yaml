@@ -133,21 +133,33 @@ steps:
   dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
 
+## Describe images
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'image'
+#  - 'inspect'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+#  id: Describe the images
 # Describe images
 - name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
   args:
-  - 'image'
-  - 'inspect'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+    - '-c'
+    - 'if [ ${_BUILD} == "true" ]; then image inspect gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG} ; fi'
   id: Describe the images
 
-
+## Check sizes of the images
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'images'
+#  id: Check sizes of the images
 # Check sizes of the images
 - name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
   args:
-  - 'images'
+    - '-c'
+    - 'if [ ${_BUILD} == "true" ]; then images ; fi'
   id: Check sizes of the images
-
 
 ## Push image in Container Registry with a tag
 #- name: 'gcr.io/cloud-builders/docker'
