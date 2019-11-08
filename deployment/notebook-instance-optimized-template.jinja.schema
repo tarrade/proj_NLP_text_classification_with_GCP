@@ -50,6 +50,10 @@ properties:
     type: string
     default: notebook-familly-derived-image
     description: application tag
+  application-version-tag:
+    type: string
+    default: v.0.0
+    description: application version tag
   network-tag:
     type: string
     default: default
