@@ -112,15 +112,23 @@ steps:
 #  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
 
+## Build docker image with the tag
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'build'
+#  - '-t'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+#  - '-t'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+#  - '.'
+#  id: Build the Docker image
+#  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 # Build docker image with the tag
 - name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
   args:
-  - 'build'
-  - '-t'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
-  - '-t'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
-  - '.'
+    - '-c'
+    - 'if [ ${_BUILD} == "true" ]; then build -t gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG} -t gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest . ; fi'
   id: Build the Docker image
   dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
@@ -141,19 +149,33 @@ steps:
   id: Check sizes of the images
 
 
+## Push image in Container Registry with a tag
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'push'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+#  id: Push the image in ContainerRegistry
 # Push image in Container Registry with a tag
 - name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
   args:
-  - 'push'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+    - '-c'
+    - 'if [ ${_BUILD} == "true" ]; then push gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG} ; fi'
   id: Push the image in ContainerRegistry
 
-
-# Push image in Container Registry with the tag latest 
+## Push image in Container Registry with the tag latest
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'push'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+#  env:
+#    - 'DOCKER_DRIVER=overlay'
+#  id: Push the image latest in ContainerRegistry
+# Push image in Container Registry with the tag latest
 - name: 'gcr.io/cloud-builders/docker'
   args:
-  - 'push'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+    - '-c'
+    - 'if [ ${_BUILD} == "true" ]; then push gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest ; fi'
   env:
     - 'DOCKER_DRIVER=overlay'
   id: Push the image latest in ContainerRegistry
@@ -214,6 +236,7 @@ substitutions:
     _DATE: none
     _CACHE_BUCKET: none
     _CONFIG_BUCKET: none
+    _BUILD: none
 
 
 timeout: 2h00m0s
