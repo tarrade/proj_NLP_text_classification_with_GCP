@@ -128,7 +128,7 @@ steps:
   entrypoint: 'bash'
   args:
     - '-c'
-    - 'if [ ${_BUILD} == "true" ]; then build -t gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG} -t gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest . ; fi'
+    - 'if [ ${_BUILD} == "true" ]; then docker build -t gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG} -t gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest . ; fi'
   id: Build the Docker image
   dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
@@ -145,7 +145,7 @@ steps:
   entrypoint: 'bash'
   args:
     - '-c'
-    - 'if [ ${_BUILD} == "true" ]; then image inspect gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG} ; fi'
+    - 'if [ ${_BUILD} == "true" ]; then docker image inspect gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG} ; fi'
   id: Describe the images
 
 
@@ -159,7 +159,7 @@ steps:
   entrypoint: 'bash'
   args:
     - '-c'
-    - 'if [ ${_BUILD} == "true" ]; then images ; fi'
+    - 'if [ ${_BUILD} == "true" ]; then docker images ; fi'
   id: Check sizes of the images
 
 
@@ -174,7 +174,7 @@ steps:
   entrypoint: 'bash'
   args:
     - '-c'
-    - 'if [ ${_BUILD} == "true" ]; then push gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG} ; fi'
+    - 'if [ ${_BUILD} == "true" ]; then docker push gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG} ; fi'
   id: Push the image in ContainerRegistry
 
 
@@ -191,7 +191,7 @@ steps:
   entrypoint: 'bash'
   args:
     - '-c'
-    - 'if [ ${_BUILD} == "true" ]; then push gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest ; fi'
+    - 'if [ ${_BUILD} == "true" ]; then docker push gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest ; fi'
   id: Push the image latest in ContainerRegistry
 
 
