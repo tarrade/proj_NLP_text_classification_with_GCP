@@ -213,7 +213,7 @@ steps:
     deployment-manager \
     deployments \
     create \
-    ${_NAME_INSTANCE}-${_OWNER}-$(date -u +%Y-%m-%d_%H-%M) \
+    ${_NAME_INSTANCE}-${_OWNER}-$(date -u +%Y-%m-%d-H-%H-%M) \
     --template \
     notebook-instance-optimized-template.jinja \
     --properties \
