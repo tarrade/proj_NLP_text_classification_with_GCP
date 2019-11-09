@@ -68,39 +68,39 @@ RUN conda list ipykernel
 #RUN conda list notebook -n env_gcp_dl
 #RUN conda list ipykernel -n env_gcp_dl
 
-RUN jupyter kernelspec list
-RUN jupyter --paths
-
-## Clean all downloaded packages
-RUN conda clean -a -y
-
-## Check for update
-RUN jupyter labextension update --all
-## Check which extension exist
-RUN jupyter labextension list
-
-# Update to fix issue with extension of jupyter lab
-RUN jupyter labextension install @jupyterlab/github
-RUN jupyter labextension install @jupyterlab/latex
-RUN jupyter labextension install @mflevine/jupyterlab_html
-#RUN jupyter labextension install jupyterlab-drawio !! issue !!
-#RUN jupyter labextension install @jupyterlab/plotly-extension !! issue !!
-#RUN jupyter labextension install jupyterlab_bokeh !! issue !!
-RUN jupyter labextension install @jupyterlab/toc
-RUN jupyter labextension install @aquirdturtle/collapsible_headings
-RUN jupyter labextension install jupyterlab-jupytext
-RUN jupyter labextension install jupyterlab-cpustatus
-RUN jupyter labextension install jupyterlab-python-file
-#RUN jupyter labextension install jupyterlab_toastify jupyterlab_conda !! issue !!
-RUN jupyter labextension install @ijmbarr/jupyterlab_spellchecker
-RUN jupyter labextension install @lckr/jupyterlab_variableinspector
-RUN jupyter labextension install nbdime-jupyterlab
-RUN jupyter labextension update @jupyter-widgets/jupyterlab-manager
-RUN jupyter labextension update @jupyterlab/celltags
-RUN jupyter labextension install @ryantam626/jupyterlab_code_formatter
-#RUN jupyter labextension install @jupyterlab/jupyterlab-monaco  !! issue !!
-#RUN jupyter labextension install jupyterlab-flake8 !! issue !!
-RUN jupyter serverextension enable --py jupyterlab_code_formatter
+#RUN jupyter kernelspec list
+#RUN jupyter --paths
+#
+### Clean all downloaded packages
+#RUN conda clean -a -y
+#
+### Check for update
+#RUN jupyter labextension update --all
+### Check which extension exist
+#RUN jupyter labextension list
+#
+## Update to fix issue with extension of jupyter lab
+#RUN jupyter labextension install @jupyterlab/github
+#RUN jupyter labextension install @jupyterlab/latex
+#RUN jupyter labextension install @mflevine/jupyterlab_html
+##RUN jupyter labextension install jupyterlab-drawio !! issue !!
+##RUN jupyter labextension install @jupyterlab/plotly-extension !! issue !!
+##RUN jupyter labextension install jupyterlab_bokeh !! issue !!
+#RUN jupyter labextension install @jupyterlab/toc
+#RUN jupyter labextension install @aquirdturtle/collapsible_headings
+#RUN jupyter labextension install jupyterlab-jupytext
+#RUN jupyter labextension install jupyterlab-cpustatus
+#RUN jupyter labextension install jupyterlab-python-file
+##RUN jupyter labextension install jupyterlab_toastify jupyterlab_conda !! issue !!
+#RUN jupyter labextension install @ijmbarr/jupyterlab_spellchecker
+#RUN jupyter labextension install @lckr/jupyterlab_variableinspector
+#RUN jupyter labextension install nbdime-jupyterlab
+#RUN jupyter labextension update @jupyter-widgets/jupyterlab-manager
+#RUN jupyter labextension update @jupyterlab/celltags
+#UN jupyter labextension install @ryantam626/jupyterlab_code_formatter
+##RUN jupyter labextension install @jupyterlab/jupyterlab-monaco  !! issue !!
+##RUN jupyter labextension install jupyterlab-flake8 !! issue !!
+#RUN jupyter serverextension enable --py jupyterlab_code_formatter
 
 RUN jupyter lab build
 
@@ -181,4 +181,4 @@ ENTRYPOINT ["/entrypoint.sh", "/run_jupyter.sh"]
 #ENTRYPOINT ["/entrypoint.sh", "/bin/bash"]
 
 # Managed to have /home working
-WORKDIR /home/
+#WORKDIR /home/
