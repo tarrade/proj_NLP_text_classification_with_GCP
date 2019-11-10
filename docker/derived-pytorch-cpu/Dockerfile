@@ -79,29 +79,29 @@ RUN conda list ipykernel
 #### Check which extension exist
 #RUN jupyter labextension list
 ##
-### Update to fix issue with extension of jupyter lab
-#RUN jupyter labextension install @jupyterlab/github
-#RUN jupyter labextension install @jupyterlab/latex
-#RUN jupyter labextension install @mflevine/jupyterlab_html
-##RUN jupyter labextension install jupyterlab-drawio !! issue !!
-##RUN jupyter labextension install @jupyterlab/plotly-extension !! issue !!
-##RUN jupyter labextension install jupyterlab_bokeh !! issue !!
-#RUN jupyter labextension install @jupyterlab/toc
-#RUN jupyter labextension install @aquirdturtle/collapsible_headings
-#RUN jupyter labextension install jupyterlab-jupytext
-#RUN jupyter labextension install jupyterlab-cpustatus
-#RUN jupyter labextension install jupyterlab-python-file
-##RUN jupyter labextension install jupyterlab_toastify jupyterlab_conda !! issue !!
-#RUN jupyter labextension install @ijmbarr/jupyterlab_spellchecker
-#RUN jupyter labextension install @lckr/jupyterlab_variableinspector
-#RUN jupyter labextension install nbdime-jupyterlab
-#RUN jupyter labextension update @jupyter-widgets/jupyterlab-manager
-#RUN jupyter labextension update @jupyterlab/celltags
-#RUN jupyter labextension install @ryantam626/jupyterlab_code_formatter
-##RUN jupyter labextension install @jupyterlab/jupyterlab-monaco  !! issue !!
-##RUN jupyter labextension install jupyterlab-flake8 !! issue !!
-#RUN jupyter serverextension enable --py jupyterlab_code_formatter
-#
+## Update to fix issue with extension of jupyter lab
+RUN jupyter labextension install @jupyterlab/github
+RUN jupyter labextension install @jupyterlab/latex
+RUN jupyter labextension install @mflevine/jupyterlab_html
+#RUN jupyter labextension install jupyterlab-drawio !! issue !!
+#RUN jupyter labextension install @jupyterlab/plotly-extension !! issue !!
+#RUN jupyter labextension install jupyterlab_bokeh !! issue !!
+RUN jupyter labextension install @jupyterlab/toc
+RUN jupyter labextension install @aquirdturtle/collapsible_headings
+RUN jupyter labextension install jupyterlab-jupytext
+RUN jupyter labextension install jupyterlab-cpustatus
+RUN jupyter labextension install jupyterlab-python-file
+#RUN jupyter labextension install jupyterlab_toastify jupyterlab_conda !! issue !!
+RUN jupyter labextension install @ijmbarr/jupyterlab_spellchecker
+RUN jupyter labextension install @lckr/jupyterlab_variableinspector
+RUN jupyter labextension install nbdime-jupyterlab
+RUN jupyter labextension update @jupyter-widgets/jupyterlab-manager
+RUN jupyter labextension update @jupyterlab/celltags
+RUN jupyter labextension install @ryantam626/jupyterlab_code_formatter
+#RUN jupyter labextension install @jupyterlab/jupyterlab-monaco  !! issue !!
+#RUN jupyter labextension install jupyterlab-flake8 !! issue !!
+RUN jupyter serverextension enable --py jupyterlab_code_formatter
+
 RUN jupyter lab build
 
 RUN jupyter labextension list
@@ -176,16 +176,16 @@ RUN sed -i -e "\$aif [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nf
 RUN cat /root/.bashrc
 
 # New test
-RUN groupadd jupyter -g 1002
-RUN useradd -u 1001 -g 1002 --shell /bin/bash --create-home jupyter
-RUN chown jupyter:jupyter /pip.conf
-RUN chown jupyter:jupyter /root/.gitconfig
-RUN chown jupyter:jupyter /.condarc
-RUN chown jupyter:jupyter /entrypoint.sh
-RUN chown jupyter:jupyter /run_jupyter.sh
-RUN chown  -R jupyter:jupyter  /
-USER jupyter
-WORKDIR /home/jupyter
+#RUN groupadd jupyter -g 1002
+#RUN useradd -u 1001 -g 1002 --shell /bin/bash --create-home jupyter
+#RUN chown jupyter:jupyter /pip.conf
+#RUN chown jupyter:jupyter /root/.gitconfig
+#RUN chown jupyter:jupyter /.condarc
+#RUN chown jupyter:jupyter /entrypoint.sh
+#RUN chown jupyter:jupyter /run_jupyter.sh
+#RUN chown  -R jupyter:jupyter  /
+#USER jupyter
+#WORKDIR /home/jupyter
 
 # Define entry points
 ENTRYPOINT ["/entrypoint.sh", "/run_jupyter.sh"]
@@ -193,5 +193,5 @@ ENTRYPOINT ["/entrypoint.sh", "/run_jupyter.sh"]
 #ENTRYPOINT ["/entrypoint.sh", "/bin/bash"]
 
 # Managed to have /home working
-#WORKDIR /home/
+WORKDIR /home/
 
