@@ -182,3 +182,10 @@ ENTRYPOINT ["/entrypoint.sh", "/run_jupyter.sh"]
 
 # Managed to have /home working
 #WORKDIR /home/
+
+# New test
+RUN groupadd jupyter -g 1002
+RUN useradd -u 1001 -g 1002 --shell /bin/bash --create-home jupyter
+USER jupyter
+WORKDIR /home/jupyter
+
