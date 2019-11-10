@@ -183,6 +183,7 @@ RUN chown jupyter:jupyter /root/.gitconfig
 RUN chown jupyter:jupyter /.condarc
 RUN chown jupyter:jupyter /entrypoint.sh
 RUN chown jupyter:jupyter /run_jupyter.sh
+RUN chown  -R jupyter:jupyter  /root
 USER jupyter
 WORKDIR /home/jupyter
 
