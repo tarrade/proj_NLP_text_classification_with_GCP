@@ -175,6 +175,12 @@ RUN cat /root/.jupyter/jupyter_notebook_config.py
 RUN sed -i -e "\$aif [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nfi\n" /root/.bashrc
 RUN cat /root/.bashrc
 
+# New test
+RUN groupadd jupyter -g 1002
+RUN useradd -u 1001 -g 1002 --shell /bin/bash --create-home jupyter
+USER jupyter
+WORKDIR /home/jupyter
+
 # Define entry points
 ENTRYPOINT ["/entrypoint.sh", "/run_jupyter.sh"]
 # For local test only
@@ -182,10 +188,4 @@ ENTRYPOINT ["/entrypoint.sh", "/run_jupyter.sh"]
 
 # Managed to have /home working
 #WORKDIR /home/
-
-# New test
-RUN groupadd jupyter -g 1002
-RUN useradd -u 1001 -g 1002 --shell /bin/bash --create-home jupyter
-USER jupyter
-WORKDIR /home/jupyter
 
