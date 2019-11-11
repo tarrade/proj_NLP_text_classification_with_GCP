@@ -6,6 +6,8 @@ RUN cat /etc/os-release
 RUN lsb_release -a
 RUN uname -r
 
+RUN conda info
+
 # Checking that the right shell is used in the image the build and later when the container is launched from the image
 RUN echo $0
 # active in the shell
