@@ -6,8 +6,6 @@ RUN cat /etc/os-release
 RUN lsb_release -a
 RUN uname -r
 
-RUN conda info
-
 # Checking that the right shell is used in the image the build and later when the container is launched from the image
 RUN echo $0
 # active in the shell
@@ -190,6 +188,20 @@ RUN cat /root/.bashrc
 #USER jupyter
 #WORKDIR /home/jupyter
 
+RUN groupadd jupyter -g 1002
+RUN useradd -u 1001 -g 1002 --shell /bin/bash --create-home jupyter
+RUN chown jupyter:jupyter /pip.conf
+RUN chown jupyter:jupyter /root/.gitconfig
+RUN chown jupyter:jupyter /.condarc
+RUN chown jupyter:jupyter /entrypoint.sh
+RUN chown jupyter:jupyter /run_jupyter.sh
+RUN chown jupyter:jupyter /root/miniconda3/etc/profile.d/conda.sh
+RUN chown -R jupyter:jupyter /root/miniconda3
+RUN chown -R jupyter:jupyter /root/.conda
+RUN chown -R jupyter:jupyter /root/.conda-env
+RUN ls -la /root
+USER jupyter
+
 # Define entry points
 ENTRYPOINT ["/entrypoint.sh", "/run_jupyter.sh"]
 # For local test only
@@ -199,18 +211,4 @@ ENTRYPOINT ["/entrypoint.sh", "/run_jupyter.sh"]
 #WORKDIR /home/
 
 # New test
-RUN groupadd jupyter -g 1002
-RUN useradd -u 1001 -g 1002 --shell /bin/bash --create-home jupyter
-RUN chown jupyter:jupyter /pip.conf
-RUN chown jupyter:jupyter /root/.gitconfig
-RUN chown jupyter:jupyter /.condarc
-RUN chown jupyter:jupyter /entrypoint.sh
-RUN chown jupyter:jupyter /run_jupyter.sh
-RUN chmod 640 /root/miniconda3/etc/profile.d/conda.sh
-RUN du -sh /root/miniconda3/*
-RUN chmod 640 -R /root/miniconda3
-RUN chown -R jupyter:jupyter  /root/.conda
-RUN chown -R jupyter:jupyter  /root/.conda-env
-RUN ls -la /root
-USER jupyter
 WORKDIR /home/jupyter
