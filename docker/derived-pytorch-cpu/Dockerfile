@@ -164,7 +164,7 @@ RUN git config --list
 
 # Copy env if they exist from /root to /home
 RUN sed -i '1 a whoami\ncp -r /root/.conda-env/env* /home/.conda-env/.' /entrypoint.sh
-RUN sed -i '6 a su - jupyter' /entrypoint.sh
+#RUN sed -i '6 a su - jupyter' /entrypoint.sh
 RUN cat  /entrypoint.sh
 # Running some checks about kernels
 RUN sed -i '1 a if [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nfi\njupyter serverextension list\nconda list nb_conda_kernels\nconda env list' /run_jupyter.sh
@@ -189,8 +189,8 @@ RUN cat /root/.bashrc
 #USER jupyter
 #WORKDIR /home/jupyter
 
-RUN groupadd jupyter -g 1002
-RUN useradd -u 1001 -g 1002 --shell /bin/bash --create-home jupyter
+#RUN groupadd jupyter -g 1002
+#RUN useradd -u 1001 -g 1002 --shell /bin/bash --create-home jupyter
 #RUN chown jupyter:jupyter /pip.conf
 #RUN chown jupyter:jupyter /root/.gitconfig
 #RUN chown jupyter:jupyter /.condarc
