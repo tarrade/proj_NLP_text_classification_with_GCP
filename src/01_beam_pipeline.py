@@ -91,12 +91,11 @@ def preprocess():
                                                     schema=table_schema,
                                                     write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
                                                     create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
-        list_values = clean_text  | "Dictionary to List" >> beam.Map(lambda record: record[:-1].values())
-        str_values = list_values  | "List to String" >> beam.Map(lambda record: 
-                                                    ', '.join(['"'+ str(col) +'"' for col in record]))
+        str_values = clean_text   | "Records to Text" >> beam.ParDo(pp.NLP())
+
         str_values                | "Write to GCS"  >> beam.io.WriteToText(output_dir+'results/posts_preprocessed',
                                                     file_name_suffix='.csv', 
-                                                    header='id, title, text_body, code_body')
+                                                    header='id, title, text_body, code_body, tags')
 
 
     if options.view_as(StandardOptions).runner == 'DataflowRunner':

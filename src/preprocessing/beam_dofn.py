@@ -63,3 +63,11 @@ class NLP(beam.DoFn):
                  'tags': [{'value': val} for val in tags]}
         
         return [record]
+    
+class CSV(beam.DoFn):
+    def process(self, element):
+        text_line = str(element['id']) + ', ' + str(element['title'])  + ', ' + str(element['text_body']) \
+                     + ', ' + str(element['code_body']) + ','
+        for value in element['tags']:
+            text = ' ' + str(value['value'])
+            text_line += text
