@@ -112,50 +112,86 @@ steps:
 #  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
 
+## Build docker image with the tag
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'build'
+#  - '-t'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+#  - '-t'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+#  - '.'
+#  id: Build the Docker image
+#  dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 # Build docker image with the tag
 - name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
   args:
-  - 'build'
-  - '-t'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
-  - '-t'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
-  - '.'
+    - '-c'
+    - 'if [ ${_BUILD} == "true" ]; then docker build -t gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG} -t gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest . ; fi'
   id: Build the Docker image
   dir: 'proj_NLP_text_classification_with_GCP/docker/${_DOCKERFILE}'
 
 
+## Describe images
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'image'
+#  - 'inspect'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+#  id: Describe the images
 # Describe images
 - name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
   args:
-  - 'image'
-  - 'inspect'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+    - '-c'
+    - 'if [ ${_BUILD} == "true" ]; then docker image inspect gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG} ; fi'
   id: Describe the images
 
 
+## Check sizes of the images
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'images'
+#  id: Check sizes of the images
 # Check sizes of the images
 - name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
   args:
-  - 'images'
+    - '-c'
+    - 'if [ ${_BUILD} == "true" ]; then docker images ; fi'
   id: Check sizes of the images
 
 
+## Push image in Container Registry with a tag
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'push'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+#  id: Push the image in ContainerRegistry
 # Push image in Container Registry with a tag
 - name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
   args:
-  - 'push'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG}'
+    - '-c'
+    - 'if [ ${_BUILD} == "true" ]; then docker push gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG} ; fi'
   id: Push the image in ContainerRegistry
 
 
-# Push image in Container Registry with the tag latest 
+## Push image in Container Registry with the tag latest
+#- name: 'gcr.io/cloud-builders/docker'
+#  args:
+#  - 'push'
+#  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
+#  env:
+#    - 'DOCKER_DRIVER=overlay'
+#  id: Push the image latest in ContainerRegistry
+# Push image in Container Registry with the tag latest
 - name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
   args:
-  - 'push'
-  - 'gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest'
-  env:
-    - 'DOCKER_DRIVER=overlay'
+    - '-c'
+    - 'if [ ${_BUILD} == "true" ]; then docker push gcr.io/$PROJECT_ID/${_DOCKERFILE}:latest ; fi'
   id: Push the image latest in ContainerRegistry
 
 
@@ -177,12 +213,16 @@ steps:
     deployment-manager \
     deployments \
     create \
-    date-$(date -u +%Y-%m-%d-%H-%M)-${_NAME_INSTANCE} \
+    ${_NAME_INSTANCE}-${_OWNER}-$(date -u +%Y-%m-%d-h-%H-%M) \
     --template \
     notebook-instance-optimized-template.jinja \
     --properties \
-    network:${_NETWORK},bucketName:${_BUCKET},container:gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG},owner-tag:${_OWNER} \
+    network:${_NETWORK},bucketName:${_BUCKET},container:gcr.io/$PROJECT_ID/${_DOCKERFILE}:${_TAG},application-version-tag:${_TAG},owner-tag:${_OWNER} \
   dir: 'proj_NLP_text_classification_with_GCP/deployment'
+
+#vm-fabien-notebook-2019-11-08-17-53
+#${_OWNER}-${_NAME_INSTANCE}-$(date -u +%Y-%m-%d-%H-%M)
+#date-$(date -u +%Y-%m-%d-%H-%M)-${_NAME_INSTANCE}
 
 
 # Read timestamp
@@ -214,6 +254,7 @@ substitutions:
     _DATE: none
     _CACHE_BUCKET: none
     _CONFIG_BUCKET: none
+    _BUILD: none
 
 
 timeout: 2h00m0s

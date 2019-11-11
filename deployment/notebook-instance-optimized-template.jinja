@@ -1,5 +1,5 @@
 resources:
-- name: vm-{{env["deployment"]}}       
+- name: ai-platform-{{env["deployment"]}}
   type: compute.v1.instance
   properties:
     zone: {{properties["zone"]}}
@@ -35,6 +35,7 @@ resources:
           value: Base.Container
     labels:
         application: {{properties["application-tag"]}}
+        tag: {{ properties["application-version-tag"]|replace(".", "-") }}
         network:  {{properties["network-tag"]}}
         owner: {{properties["owner-tag"]}}
         type:  {{properties["type-tag"]}}
