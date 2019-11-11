@@ -3,10 +3,11 @@ data/cased_L-12_H-768_A-12/
 data/cased_L-24_H-1024_A-16/
 data/uncased_L-12_H-768_A-12/
 data/uncased_L-24_H-1024_A-16/
-env/.ipynb_checkpoints/
 .data/
 __pycache__/
 *.bak
-*checkpoint.ipynb
+.ipynb_checkpoints
 .DS_Store
 env/test.yml
+*.egg-info
+core

@@ -6,19 +6,7 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import StandardOptions
 from apache_beam.options.pipeline_options import GoogleCloudOptions
-
-# export BUCKET_NAME=name_bucket_for_stackoverflow (where you can find /stackoverflow)
-# create sub folder on Cloud Storage: gs://{0}/stackoverflow/tmp and gs://{0}/stackoverflow/tmp/staging
-# sudo pip3 install -U -r requirements.txt
-
-# get all variables here
-os.environ['PROJECT_ID'] =  subprocess.run('gcloud config list project --format "value(core.project)"',
-                                             shell=True, check=True,
-                                             stdout=subprocess.PIPE).stdout.decode().replace('\n', '').replace('\r', '')
-
-os.environ['REGION'] = subprocess.run('gcloud config get-value compute/region  2> /dev/null',
-                                      shell=True, check=True,
-                                      stdout=subprocess.PIPE).stdout.decode().replace('\n', '').replace('\r', '')
+from apache_beam.options.pipeline_options import SetupOptions
 
 print(os.environ['PROJECT_ID'])
 print(os.environ['BUCKET_NAME'])
@@ -90,6 +78,7 @@ def preprocess():
     google_cloud_options.temp_location = os.path.join(output_dir, 'tmp')
     # done by command line
     #options.view_as(StandardOptions).runner = RUNNER
+    options.view_as(SetupOptions).setup_file=os.environ['DIR_PROJ']+'/setup.py'
 
     # instantantiate Pipeline object using PipelineOptions
     print('Launching Dataflow job {} ... hang on'.format(job_name))

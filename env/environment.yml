@@ -13,6 +13,7 @@ dependencies:
 # data processing
 - numpy=1.17.2
 - pandas=0.25.1
+- beautifulsoup4=4.8.1
 # data visualization
 - plotly=4.1.0
 - chart-studio =1.0.0
@@ -67,22 +68,25 @@ dependencies:
 - pip:
   # data processing
   - apache-beam[gcp]==2.16.0
+  - bs4==0.0.1
   # data visualization
   - facets-overview==1.0.0
+  - pandas-profiling==2.3.0
   # machine learning
+  - scikit-multilearn==0.2.0
   - xgboost==0.90
   - tensorflow==2.0.0
   - tensorflow-hub==0.6.0
   - tensorflow-datasets==1.2.0
+  - tensorflow-text==2.0.0rc0
   - tf-explain==0.0.2a0
-  - scikit-multilearn==0.2.0
-  #- tensorflow-addons==0.5.2
-  #- tensorflow-text==1.0.0b2
+  - tensorflow_io
+  - tensorflow-addons==0.6.0
   # machine learning - nlp
   - bert-tensorflow==1.0.1
   # machine learning - nlp
   #- "git+https://github.com/tarrade/cutter-ng.git#egg=cutter-ng"
-  #- "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.1.0/en_core_web_sm-2.1.0.tar.gz#egg=en_core_web_sm==2.1.0"
+  - "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.1.0/en_core_web_sm-2.1.0.tar.gz#egg=en_core_web_sm==2.1.0"
   #- "https://github.com/explosion/spacy-models/releases/download/en_core_web_md-2.1.0/en_core_web_md-2.1.0.tar.gz#egg=en_core_web_md==2.1.0"
   #- "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-2.1.0/en_core_web_lg-2.1.0.tar.gz#egg=en_core_web_lg==2.1.0"
   #- "https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-2.1.0/de_core_news_sm-2.1.0.tar.gz#egg=de_core_news_sm==2.1.0"
