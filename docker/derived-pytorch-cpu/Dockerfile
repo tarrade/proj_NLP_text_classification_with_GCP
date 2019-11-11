@@ -195,10 +195,16 @@ RUN chown jupyter:jupyter /root/.gitconfig
 RUN chown jupyter:jupyter /.condarc
 RUN chown jupyter:jupyter /entrypoint.sh
 RUN chown jupyter:jupyter /run_jupyter.sh
-RUN chown jupyter:jupyter /root/miniconda3/etc/profile.d/conda.sh
-RUN chown -R jupyter:jupyter /root/miniconda3
-RUN chown -R jupyter:jupyter /root/.conda
-RUN chown -R jupyter:jupyter /root/.conda-env
+RUN find /root/miniconda3 -type d -exec chmod 755 {} \;
+RUN find /root/miniconda3 -type f -exec chmod 644 {} \;
+RUN find /root/.conda -type d -exec chmod 755 {} \;
+RUN find /root/.conda -type f -exec chmod 644 {} \;
+RUN find /root/.conda-env -type d -exec chmod 755 {} \;
+RUN find /root/.conda-env -type f -exec chmod 644 {} \;
+#RUN chown jupyter:jupyter /root/miniconda3/etc/profile.d/conda.sh
+#RUN chown -R jupyter:jupyter /root/miniconda3
+#RUN chown -R jupyter:jupyter /root/.conda
+#RUN chown -R jupyter:jupyter /root/.conda-env
 RUN ls -la /root
 USER jupyter
 
