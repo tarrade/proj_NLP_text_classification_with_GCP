@@ -4,6 +4,7 @@ from setuptools import setup
 REQUIRED_PACKAGES = ['apache-beam[gcp]==2.16.0',
                      'beautifulsoup4==4.8.1',
                      'spacy==2.1.8',
+                     'unidecode==1.1.1',
                      'en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.1.0/en_core_web_sm-2.1.0.tar.gz'
                      ]
 

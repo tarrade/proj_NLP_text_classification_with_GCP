@@ -33,7 +33,8 @@ def create_query():
 table_schema = {'fields': [
     {'name': 'id', 'type': 'NUMERIC', 'mode': 'REQUIRED'},
     {'name': 'title', 'type': 'STRING', 'mode': 'NULLABLE'},
-    {'name': 'body', 'type': 'STRING', 'mode': 'NULLABLE'},
+    {'name': 'text_body', 'type': 'STRING', 'mode': 'NULLABLE'},
+    {'name': 'code_body', 'type': 'STRING', 'mode': 'NULLABLE'},
     
     {"fields": [
         {"mode": "NULLABLE", 
