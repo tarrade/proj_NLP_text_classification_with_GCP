@@ -91,7 +91,7 @@ def preprocess():
                                                     schema=table_schema,
                                                     write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
                                                     create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
-        str_values = clean_text   | "Records to Text" >> beam.ParDo(pp.NLP())
+        str_values = clean_text   | "Records to Text" >> beam.ParDo(pp.CSV())
 
         str_values                | "Write to GCS"  >> beam.io.WriteToText(output_dir+'results/posts_preprocessed',
                                                     file_name_suffix='.csv', 
