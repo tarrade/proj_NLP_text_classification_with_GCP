@@ -14,18 +14,9 @@ SHELL ["/bin/bash", "-c"]
 ENV SHELL /bin/bash
 RUN echo $0
 
-## Auto Shutdown On Idle
-#RUN apt-get update && apt-get install -y sysstat bc
-#RUN git clone --branch auto_shutdown https://github.com/b0noI/ai-platform-samples.git
-#RUN cd ai-platform-samples/notebooks/auto-shutdown && cp ./ashutdown /usr/local/bin/ && cp ./ashutdown.service /lib/systemd/system/
-
 ## Creating conda env
 # Adding the environment files in the docker image
 ADD base.yml base.yml
-#ADD environment.yml environment.yml
-#ADD environment_gcp.yml environment_gcp.yml
-#ADD environment_2_0.yml environment_2_0.yml
-#ADD environment_2_0_nightly.yml environment_2_0_nightly.yml
 
 # Update conda manager
 RUN conda update -n base conda -y
@@ -42,10 +33,8 @@ RUN conda config --add envs_dirs /root/.conda-env/
 # Update conda envs
 RUN conda env update --file base.yml
 
-# Create env
+# Create env if needed
 #RUN conda env create -f environment.yml
-#RUN conda env create -f environment_gcp.yml
-#RUN conda env create -f environment_2_0_nightly.yml
 
 # Checking configuration and new created envs
 RUN conda config --show
@@ -64,12 +53,8 @@ RUN conda list nb_conda_kernels
 RUN conda list notebook
 RUN conda list ipykernel
 
-#RUN conda list nb_conda_kernels -n env_gcp_dl
-#RUN conda list notebook -n env_gcp_dl
-#RUN conda list ipykernel -n env_gcp_dl
-
-#RUN jupyter kernelspec list
-#RUN jupyter --paths
+RUN jupyter kernelspec list
+RUN jupyter --paths
 #
 ### Clean all downloaded packages
 #RUN conda clean -a -y
@@ -156,6 +141,7 @@ ENV PIP_CONFIG_FILE /pip.conf
 ADD .gitconfig /root/.gitconfig
 # Check that the config file was created properly
 RUN git config --list
+
 # Adding the config file to read entrerise Github
 #RUN mkdir -p /root/.ssh/
 #ADD known_hosts /root/.ssh/known_hosts
@@ -163,15 +149,17 @@ RUN git config --list
 #ADD config /root/.ssh/config
 
 # Copy env if they exist from /root to /home
-RUN sed -i '1 a whoami\ncp -r /root/.conda-env/env* /home/.conda-env/.' /entrypoint.sh
+RUN sed -i '1 a printenv\nwhoami\ncp -r /root/.conda-env/env* /home/.conda-env/.' /entrypoint.sh
 #RUN sed -i '6 a su - jupyter' /entrypoint.sh
 RUN cat  /entrypoint.sh
 # Running some checks about kernels
-RUN sed -i '1 a if [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nfi\njupyter serverextension list\nconda list nb_conda_kernels\nconda env list' /run_jupyter.sh
+RUN sed -i '1 a if [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nfi\njupyter serverextension list\nconda list nb_conda_kernels\nconda env list\nprintenv' /run_jupyter.sh
 RUN cat  /run_jupyter.sh
 # Adding option in jupyter notebook: display conda env, display hidden files
 RUN sed -i -e "\$ac.NotebookApp.kernel_spec_manager_class = 'nb_conda_kernels.manager.CondaKernelSpecManager'" /root/.jupyter/jupyter_notebook_config.py
 RUN sed -i -e "\$ac.ContentsManager.allow_hidden = True" /root/.jupyter/jupyter_notebook_config.py
+RUN sed -i -e "\$ac.NotebookApp.notebook_dir = /home" /root/.jupyter/jupyter_notebook_config.py
+
 RUN cat /root/.jupyter/jupyter_notebook_config.py
 # Add execution of custom scripts it is exists
 RUN sed -i -e "\$aif [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nfi\n" /root/.bashrc
