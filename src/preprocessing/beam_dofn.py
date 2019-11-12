@@ -10,14 +10,17 @@ class NLP(beam.DoFn):
         self.__spacy.vocab['-pron-'].is_stop = True
         
     def __decode_html(self, input_str: str) -> str:
-        soup = bs4.BeautifulSoup(input_str, 'html.parser')
-        text_soup = soup.find_all('p')
-        code_soup = soup.find_all('code')
+        try:
+            soup = bs4.BeautifulSoup(input_str, 'html.parser')
+            text_soup = soup.find_all('p')
+            code_soup = soup.find_all('code')
         
-        text = [val.get_text(separator=' ') for val in text_soup]
-        code = [val.get_text(separator=' ') for val in code_soup]
+            text = [val.get_text(separator=' ') for val in text_soup]
+            code = [val.get_text(separator=' ') for val in code_soup]
         
-        return ' '.join(text), ' '.join(code)
+            return ' '.join(text), ' '.join(code)
+        except TypeError:
+            return '', ''
     
     def __remove_accented_char(self, input_str: str) -> str:
         try:
@@ -54,20 +57,17 @@ class NLP(beam.DoFn):
         text, code = self.__decode_html(element['body'])
         text = self.__nlp(text)
         code = self.__nlp(code)
-        tags = self.__split_tags(element['tags'])
         
         record = {'id': element['id'],
                  'title': title,
                  'text_body': text,
                  'code_body': code,
-                 'tags': [{'value': val} for val in tags]}
+                 'tags': element['tags']}
         
         return [record]
     
 class CSV(beam.DoFn):
     def process(self, element):
         text_line = str(element['id']) + ', ' + str(element['title'])  + ', ' + str(element['text_body']) \
-                     + ', ' + str(element['code_body']) + ','
-        for value in element['tags']:
-            text = ' ' + str(value['value'])
-            text_line += text
+                     + ', ' + str(element['code_body']) + ', ' + '-'.join(element['tags'])
+        return [text_line]
