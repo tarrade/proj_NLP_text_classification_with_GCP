@@ -20,6 +20,8 @@ resources:
         type: ONE_TO_ONE_NAT
     metadata:
         items:
+        - key: startup-script-url
+          value: gs://{{properties["bucketName"]}}/scripts/start-up-scrip-ai-vm.sh
         - key: post-startup-script
           value: |
             gs://{{properties["bucketName"]}}/scripts/auto-shutdown-scrip.sh
