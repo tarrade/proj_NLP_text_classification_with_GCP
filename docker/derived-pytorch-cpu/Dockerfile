@@ -134,18 +134,23 @@ RUN git config --list
 #ADD config /root/.ssh/config
 
 # Copy env if they exist from /root to /home
-RUN sed -i '1 a printenv\nwhoami\ncp -r /root/.conda-env/env* /home/.conda-env/.' /entrypoint.sh
-#RUN sed -i '6 a su - jupyter' /entrypoint.sh
+RUN sed -i '1 a cp -r /root/.conda-env/env* /home/.conda-env/.' /entrypoint.sh
 RUN cat  /entrypoint.sh
+
 # Running some checks about kernels
-RUN sed -i '1 a if [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nfi\njupyter serverextension list\nconda list nb_conda_kernels\nconda env list\nprintenv' /run_jupyter.sh
+RUN sed -i '1 a if [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nfi\njupyter serverextension list\nconda info\nconda list nb_conda_kernels\nconda env list\nprintenv' /run_jupyter.sh
 RUN cat  /run_jupyter.sh
+
 # Adding option in jupyter notebook: display conda env, display hidden files
 RUN sed -i -e "\$ac.NotebookApp.kernel_spec_manager_class = 'nb_conda_kernels.manager.CondaKernelSpecManager'" /root/.jupyter/jupyter_notebook_config.py
 RUN sed -i -e "\$ac.ContentsManager.allow_hidden = True" /root/.jupyter/jupyter_notebook_config.py
 RUN sed -i -e "\$ac.NotebookApp.notebook_dir = '/home'" /root/.jupyter/jupyter_notebook_config.py
-
 RUN cat /root/.jupyter/jupyter_notebook_config.py
+
+# Add execution of custom scripts it is exists
+RUN sed -i -e "\$aif [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nfi\n" /etc/skel/.profile
+RUN cat /etc/skel/.profile
+
 # Add execution of custom scripts it is exists
 RUN sed -i -e "\$aif [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nfi\n" /root/.bashrc
 RUN cat /root/.bashrc
