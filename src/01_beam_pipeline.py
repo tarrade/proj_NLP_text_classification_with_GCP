@@ -8,6 +8,7 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import StandardOptions
 from apache_beam.options.pipeline_options import GoogleCloudOptions
+from apache_beam.options.pipeline_options import WorkerOptions
 from apache_beam.options.pipeline_options import SetupOptions
 import src.preprocessing.beam_dofn as pp
 
@@ -24,7 +25,8 @@ def create_query():
       body,
       tags
     FROM
-      `nlp-text-classification.stackoverflow.posts_subset`
+      `nlp-text-classification.stackoverflow.posts_p1_subset`
+    LIMIT 20
     """
 
     return query
@@ -34,16 +36,7 @@ table_schema = {'fields': [
     {'name': 'title', 'type': 'STRING', 'mode': 'NULLABLE'},
     {'name': 'text_body', 'type': 'STRING', 'mode': 'NULLABLE'},
     {'name': 'code_body', 'type': 'STRING', 'mode': 'NULLABLE'},
-    
-    {"fields": [
-        {"mode": "NULLABLE", 
-         "name": "value", 
-         "type": "STRING"}
-    ], 
-            "mode": "REPEATED", 
-            "name": "tags", 
-            "type": "RECORD"
-    }
+    {'name': 'tags', 'type': 'STRING', 'mode': 'REPEATED'},
 ]}
 
 
@@ -64,10 +57,12 @@ def preprocess():
     options = PipelineOptions()
     google_cloud_options = options.view_as(GoogleCloudOptions)
     google_cloud_options.project =  project
-    google_cloud_options.job_name =  job_name
     google_cloud_options.region = region
+    google_cloud_options.job_name =  job_name
     google_cloud_options.staging_location = os.path.join(output_dir, 'tmp', 'staging')
     google_cloud_options.temp_location = os.path.join(output_dir, 'tmp')
+    worker_options = options.view_as(WorkerOptions)
+    worker_options.max_num_workers =  3
 
     #options.view_as(StandardOptions).runner = RUNNER
     options.view_as(SetupOptions).setup_file=os.environ['DIR_PROJ']+'/setup.py'
