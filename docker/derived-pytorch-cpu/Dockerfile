@@ -55,62 +55,47 @@ RUN conda list ipykernel
 
 RUN jupyter kernelspec list
 RUN jupyter --paths
-#
-### Clean all downloaded packages
-#RUN conda clean -a -y
-#
-#### Check for update
-#RUN jupyter labextension update --all
-#### Check which extension exist
-#RUN jupyter labextension list
-##
 
-### Update to fix issue with extension of jupyter lab
-#RUN jupyter labextension install @jupyterlab/github
-#RUN jupyter labextension install @jupyterlab/latex
-#RUN jupyter labextension install @mflevine/jupyterlab_html
-##RUN jupyter labextension install jupyterlab-drawio !! issue !!
-##RUN jupyter labextension install @jupyterlab/plotly-extension !! issue !!
-##RUN jupyter labextension install jupyterlab_bokeh !! issue !!
-#RUN jupyter labextension install @jupyterlab/toc
-#RUN jupyter labextension install @aquirdturtle/collapsible_headings
-#RUN jupyter labextension install jupyterlab-jupytext
-#RUN jupyter labextension install jupyterlab-cpustatus
-#RUN jupyter labextension install jupyterlab-python-file
-##RUN jupyter labextension install jupyterlab_toastify jupyterlab_conda !! issue !!
-#RUN jupyter labextension install @ijmbarr/jupyterlab_spellchecker
-#RUN jupyter labextension install @lckr/jupyterlab_variableinspector
-#RUN jupyter labextension install nbdime-jupyterlab
-#RUN jupyter labextension update @jupyter-widgets/jupyterlab-manager
-#RUN jupyter labextension update @jupyterlab/celltags
-#RUN jupyter labextension install @ryantam626/jupyterlab_code_formatter
-##RUN jupyter labextension install @jupyterlab/jupyterlab-monaco  !! issue !!
-##RUN jupyter labextension install jupyterlab-flake8 !! issue !!
-#RUN jupyter serverextension enable --py jupyterlab_code_formatter
-#
-#RUN jupyter lab build
-#
-#RUN jupyter labextension list
+## Clean all downloaded packages
+RUN conda clean -a -y
 
-# create user and create home directory
-#RUN useradd -m jupyter
-#RUN pwd && cd /home &&  mkdir jupyter && ls -la && pwd && jupyter:users jupyter
-#RUN adduser --disabled-password --gecos "" jupyter
-#RUN useradd -rm -d /home/jupyter -s /bin/bash -g root -G sudo -u 1000 jupyter
+## Check for update
+RUN jupyter labextension update --all
+### Check which extension exist
+RUN jupyter labextension list
+
+## Update to fix issue with extension of jupyter lab
+RUN jupyter labextension install @jupyterlab/github
+RUN jupyter labextension install @jupyterlab/latex
+RUN jupyter labextension install @mflevine/jupyterlab_html
+#RUN jupyter labextension install jupyterlab-drawio !! issue !!
+#RUN jupyter labextension install @jupyterlab/plotly-extension !! issue !!
+#RUN jupyter labextension install jupyterlab_bokeh !! issue !!
+RUN jupyter labextension install @jupyterlab/toc
+RUN jupyter labextension install @aquirdturtle/collapsible_headings
+RUN jupyter labextension install jupyterlab-jupytext
+RUN jupyter labextension install jupyterlab-cpustatus
+RUN jupyter labextension install jupyterlab-python-file
+#RUN jupyter labextension install jupyterlab_toastify jupyterlab_conda !! issue !!
+RUN jupyter labextension install @ijmbarr/jupyterlab_spellchecker
+RUN jupyter labextension install @lckr/jupyterlab_variableinspector
+RUN jupyter labextension install nbdime-jupyterlab
+RUN jupyter labextension update @jupyter-widgets/jupyterlab-manager
+RUN jupyter labextension update @jupyterlab/celltags
+RUN jupyter labextension install @ryantam626/jupyterlab_code_formatter
+#RUN jupyter labextension install @jupyterlab/jupyterlab-monaco  !! issue !!
+#RUN jupyter labextension install jupyterlab-flake8 !! issue !!
+RUN jupyter serverextension enable --py jupyterlab_code_formatter
+
+RUN jupyter lab build
+
+RUN jupyter labextension list
 
 # Checking more info
 RUN id
 RUN whoami
 RUN cat /etc/passwd
 RUN cat /etc/group
-
-# Cheking is /home/jupyter was created
-RUN ls -la
-RUN ls -la  /home
-
-# Trying to switch to jupyter user
-#USER jupyter
-#WORKDIR /home/jupyter
 
 # Running some checks
 RUN echo $HOME
@@ -165,45 +150,8 @@ RUN cat /root/.jupyter/jupyter_notebook_config.py
 RUN sed -i -e "\$aif [ -e /home/config.sh ]\nthen\n    source /home/config.sh\nfi\n" /root/.bashrc
 RUN cat /root/.bashrc
 
-# New test
-#RUN groupadd jupyter -g 1002
-#RUN useradd -u 1001 -g 1002 --shell /bin/bash --create-home jupyter
-#RUN chown jupyter:jupyter /pip.conf
-#RUN chown jupyter:jupyter /root/.gitconfig
-#RUN chown jupyter:jupyter /.condarc
-#RUN chown jupyter:jupyter /entrypoint.sh
-#RUN chown jupyter:jupyter /run_jupyter.sh
-#RUN chown  -R jupyter:jupyter  /
-#USER jupyter
-#WORKDIR /home/jupyter
-
-#RUN groupadd jupyter -g 1002
-#RUN useradd -u 1001 -g 1002 --shell /bin/bash --create-home jupyter
-#RUN chown jupyter:jupyter /pip.conf
-#RUN chown jupyter:jupyter /root/.gitconfig
-#RUN chown jupyter:jupyter /.condarc
-#RUN chown jupyter:jupyter /entrypoint.sh
-#RUN chown jupyter:jupyter /run_jupyter.sh
-#RUN find /root/miniconda3 -type d -exec chmod 755 {} \;
-#RUN find /root/miniconda3 -type f -exec chmod 644 {} \;
-#RUN find /root/.conda -type d -exec chmod 755 {} \;
-#RUN find /root/.conda -type f -exec chmod 644 {} \;
-#RUN find /root/.conda-env -type d -exec chmod 755 {} \;
-#RUN find /root/.conda-env -type f -exec chmod 644 {} \;
-#RUN chown jupyter:jupyter /root/miniconda3/etc/profile.d/conda.sh
-#RUN chown -R jupyter:jupyter /root/miniconda3
-#RUN chown -R jupyter:jupyter /root/.conda
-#RUN chown -R jupyter:jupyter /root/.conda-env
-#RUN ls -la /root
-#USER jupyter
-
 # Define entry points
 ENTRYPOINT ["/entrypoint.sh", "/run_jupyter.sh"]
-# For local test only
-#ENTRYPOINT ["/entrypoint.sh", "/bin/bash"]
 
-# Managed to have /home working
+# Don't use it
 #WORKDIR /home/
-
-# New test
-#WORKDIR /home/jupyter
