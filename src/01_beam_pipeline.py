@@ -17,7 +17,7 @@ print(os.environ['BUCKET_NAME'])
 print(os.environ['REGION'])
 
 # define query table
-def create_query():
+def data_query():
     query = """
     SELECT
       id,
@@ -25,10 +25,23 @@ def create_query():
       body,
       tags
     FROM
-      `nlp-text-classification.stackoverflow.posts_p1_subset`
-    LIMIT 20
+      `nlp-text-classification.stackoverflow.posts_p1`
     """
+    return query
 
+def tag_query():
+    query = """
+    SELECT
+      tag
+    FROM
+      `nlp-text-classification.stackoverflow.tags`
+    WHERE
+      tag <> ''
+    ORDER BY
+      count DESC
+    LIMIT
+      50
+    """
     return query
     
 table_schema = {'fields': [
@@ -57,12 +70,12 @@ def preprocess():
     options = PipelineOptions()
     google_cloud_options = options.view_as(GoogleCloudOptions)
     google_cloud_options.project =  project
-    google_cloud_options.region = region
+    google_cloud_options.region = 'europe-west1'
     google_cloud_options.job_name =  job_name
     google_cloud_options.staging_location = os.path.join(output_dir, 'tmp', 'staging')
     google_cloud_options.temp_location = os.path.join(output_dir, 'tmp')
     worker_options = options.view_as(WorkerOptions)
-    worker_options.max_num_workers =  3
+    worker_options.max_num_workers =  100
 
     #options.view_as(StandardOptions).runner = RUNNER
     options.view_as(SetupOptions).setup_file=os.environ['DIR_PROJ']+'/setup.py'
@@ -77,21 +90,23 @@ def preprocess():
     tableId='posts_preprocessed')
     
     with beam.Pipeline(options=options) as p:
-        table = p                 | "Read from BigQuery" >> beam.io.Read(beam.io.BigQuerySource(
-                                                    query=create_query(),
+        post_table = p            | "Read Posts from BigQuery" >> beam.io.Read(beam.io.BigQuerySource(
+                                                    query=data_query(),
                                                     use_standard_sql=True))
-        clean_text = table        | "Preprocessing" >> beam.ParDo(pp.NLP())
-        clean_text                | "Write to BigQuery" >> beam.io.WriteToBigQuery(
+        #tag_table = p             | "Read Tags from BigQuery" >> beam.io.Read(beam.io.BigQuerySource(
+                                                    #query=tag_query(),
+                                                    #use_standard_sql=True))
+        clean_text = post_table   | "Preprocessing" >> beam.ParDo(pp.NLP())
+        clean_text                | "Write Posts to BigQuery" >> beam.io.WriteToBigQuery(
                                                     new_table,
                                                     schema=table_schema,
                                                     write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
                                                     create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
-        str_values = clean_text   | "Records to Text" >> beam.ParDo(pp.CSV())
+        str_values = clean_text   | "Post Records to Text" >> beam.ParDo(pp.CSV())
 
-        str_values                | "Write to GCS"  >> beam.io.WriteToText(output_dir+'results/posts_preprocessed',
+        str_values                | "Write Posts to GCS"  >> beam.io.WriteToText(output_dir+'results/posts_preprocessed',
                                                     file_name_suffix='.csv', 
                                                     header='id, title, text_body, code_body, tags')
-
 
     if options.view_as(StandardOptions).runner == 'DataflowRunner':
         print('DataflowRunner')
