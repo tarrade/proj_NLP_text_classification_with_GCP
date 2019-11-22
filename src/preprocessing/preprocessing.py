@@ -19,13 +19,23 @@ print(os.environ['REGION'])
 # define query table
 def data_query():
     query = """
-    SELECT
-      id,
-      title,
-      body,
-      tags
-    FROM
-      `nlp-text-classification.stackoverflow.posts_p1`
+SELECT
+  id,
+  title,
+  body,
+  tags
+FROM
+  `nlp-text-classification.stackoverflow.posts_p1`
+WHERE
+  id IN (
+  SELECT
+    id
+  FROM
+    stackoverflow.post_length
+  ORDER BY
+    body_length DESC
+  LIMIT
+    10000)
     """
     return query
 
@@ -81,7 +91,7 @@ def preprocess():
     worker_options.zone = 'europe-west6-b'
     worker_options.use_public_ips=False
     worker_options.network = 'default'
-    worker_options.disk_size_gb = 50
+   # worker_options.disk_size_gb = 50
 
     #options.view_as(StandardOptions).runner = RUNNER
     options.view_as(SetupOptions).setup_file=os.environ['DIR_PROJ']+'/setup.py'
@@ -93,7 +103,7 @@ def preprocess():
     new_table = beam.io.gcp.internal.clients.bigquery.TableReference(
     projectId='nlp-text-classification',
     datasetId='stackoverflow',
-    tableId='posts_dataflow')
+    tableId='posts_preprocessed')
     
     with beam.Pipeline(options=options) as p:
         post_table = p            | "Read Posts from BigQuery" >> beam.io.Read(beam.io.BigQuerySource(
@@ -130,6 +140,6 @@ if __name__ == '__main__':
     preprocess()
 
 # Usage
-# python3 01_beam_pipeline.py --runner DataflowRunner
+# python3 preprocessing.py --runner DataflowRunner
 # python3 beam-pipeline.py
 # python3 beam-pipeline.py --runner DataflowRunner --no_use_public_ips --subnetwork 
