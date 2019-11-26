@@ -2,8 +2,8 @@ import pytest, bs4, spacy, re, unidecode
 
 class NLP():
         
-    def setup(self) -> None:
-        self.__spacy = spacy.load('en_core_web_sm')
+    def __init__(self) -> None:
+        self.__spacy = spacy.load('en_core_web_sm', disable=['parser', 'ner'])
         self.__spacy.vocab['-pron-'].is_stop = True
         self.__tags = ['javascript', 'java', 'c#', 'php', 'android', 'jquery', 'python', 'html', 'c++', 'ios', 'mysql', 'css', 'sql', 'asp.net', 'objective-c', 'ruby-on-rails', '.net', 'c', 'iphone', 'arrays', 'angularjs', 'sql-server', 'ruby', 'json', 'ajax', 'regex', 'r', 'xml', 'asp.net-mvc', 'node.js', 'linux', 'django', 'wpf', 'database', 'xcode', 'vb.net', 'eclipse', 'string', 'swift', 'windows', 'excel', 'wordpress', 'html5', 'spring', 'multithreading', 'facebook', 'image', 'forms', 'git', 'oracle']
         
@@ -31,7 +31,7 @@ class NLP():
 
     def lemmatization(self, input_str: str) -> str:
         doc = self.__spacy(input_str)
-        tokens = [token.lemma_.lower() for token in doc if self.__spacy_cleaning(token)]
+        tokens = [token.lemma_.lower() for token in doc if self.spacy_cleaning(token)]
         return ' '.join(tokens)
     
     def remove_punctuation(self, input_str: str) -> str:
@@ -42,9 +42,9 @@ class NLP():
         return ' '.join(output_list)
     
     def nlp(self, input_str: str) -> str:
-        accent = self.__remove_accented_char(input_str)
-        lemma = self.__lemmatization(accent)
-        punctuation = self.__remove_punctuation(lemma)
+        accent = self.remove_accented_char(input_str)
+        lemma = self.lemmatization(accent)
+        punctuation = self.remove_punctuation(lemma)
         
         return punctuation  
     
