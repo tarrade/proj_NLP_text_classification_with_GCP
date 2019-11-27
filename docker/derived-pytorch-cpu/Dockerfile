@@ -25,6 +25,7 @@ RUN conda update -n base conda -y
 RUN mkdir -p /root/.conda-env/
 RUN mkdir -p /home/.conda-env/
 RUN mkdir -p /home/.conda-pkg/
+RUN mkdir -p /home/.jupyter_autosave/
 
 # Create config files
 RUN conda config --add channels conda-forge
@@ -145,6 +146,7 @@ RUN cat  /run_jupyter.sh
 RUN sed -i -e "\$ac.NotebookApp.kernel_spec_manager_class = 'nb_conda_kernels.manager.CondaKernelSpecManager'" /root/.jupyter/jupyter_notebook_config.py
 RUN sed -i -e "\$ac.ContentsManager.allow_hidden = True" /root/.jupyter/jupyter_notebook_config.py
 RUN sed -i -e "\$ac.NotebookApp.notebook_dir = '/home'" /root/.jupyter/jupyter_notebook_config.py
+RUN sed -i -e "\$ac.FileCheckpoints.checkpoint_dir = '/home/.jupyter_autosave'" /root/.jupyter/jupyter_notebook_config.py
 RUN cat /root/.jupyter/jupyter_notebook_config.py
 
 # Add execution of custom scripts it is exists
