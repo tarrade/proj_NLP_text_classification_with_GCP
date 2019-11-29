@@ -40,7 +40,7 @@ dependencies:
 # machine learning - nlp
 - nltk=3.4.4
 - gensim=3.7.3
-- spacy=2.2.5
+- spacy=2.2.3
 - spacy-lookups-data=0.1.0
 - langdetect=1.0.7
 # code audit
