@@ -29,8 +29,8 @@ def print_metrics(y_t, y_pred_t, mode=''):
     """
     print('Model performance on the {} dataset:'.format(mode))
 
-    mse = mean_squared_error(y_t, y_pred_t)
-    logloss = log_loss(y_t, y_pred_t)
+    #mse = mean_squared_error(y_t, y_pred_t)
+    #logloss = log_loss(y_t, y_pred_t)
     accuracy = accuracy_score(y_t, y_pred_t)
     f1 = f1_score(y_t, y_pred_t)
     precision_micro = precision_score(y_t, y_pred_t, average='micro')
@@ -57,7 +57,6 @@ def print_metrics(y_t, y_pred_t, mode=''):
 
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
-                          title='Confusion matrix',
                           cmap=plt.cm.Blues):
     """
     This function prints and plots the confusion matrix.
@@ -83,16 +82,16 @@ def plot_confusion_matrix(cm, classes,
     """
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
+        title = 'Normalized Confusion Matrix'
     else:
-        print('Confusion matrix, without normalization')
+        title = 'Confusion Matrix'
 
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
-    # plt.colorbar()
     tick_marks = np.arange(len(classes))
     plt.xticks(tick_marks, classes, rotation=45)
     plt.yticks(tick_marks, classes)
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.colorbar()
 
     fmt = '.2f' if normalize else 'd'
     thresh = cm.max() / 2.

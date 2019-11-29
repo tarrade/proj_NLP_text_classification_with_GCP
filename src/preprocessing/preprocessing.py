@@ -11,7 +11,6 @@ from apache_beam.options.pipeline_options import GoogleCloudOptions
 from apache_beam.options.pipeline_options import WorkerOptions
 from apache_beam.options.pipeline_options import SetupOptions
 import src.preprocessing.beam_dofn as pp
-import data.beam_debug as debug
 
 print(os.environ['PROJECT_ID'])
 print(os.environ['BUCKET_NAME'])
@@ -27,9 +26,7 @@ SELECT
   tags
 FROM
   `nlp-text-classification.stackoverflow.posts_p1`
-WHERE
-  id IN {minute_5}""".format(minute_5=debug.minute_5)
-    
+"""
     return query
 
 def tag_query():
