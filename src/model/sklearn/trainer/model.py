@@ -11,15 +11,15 @@ from sklearn.metrics import (
     accuracy_score
 )
 
-PROJECT = None
-KEYDIR  = 'trainer'
+#PROJECT = None
+#KEYDIR  = 'trainer'
 
 def create_queries():
     query = """
     SELECT
     *
     FROM
-    stackoverflow.posts_preprocessed_selection_subset
+    `nlp-text-classification.stackoverflow.posts_preprocessed_selection_subset`
     """
     
     return query
@@ -85,12 +85,11 @@ def train_and_evaluate():
     
     return pipeline
 
-#def save_model(estimator, gcspath, name):
-#  from sklearn.externals import joblib
-#  import os, subprocess, datetime
-#  model = 'model.joblib'
-#  joblib.dump(estimator, model)
-#  model_path = os.path.join(gcspath, datetime.datetime.now().strftime(
-#    'export_%Y%m%d_%H%M%S'), model)
-#  subprocess.check_call(['gsutil', 'cp', model, model_path])
-#  return model_path
+def save_model(estimator, gcspath, name):
+    from sklearn.externals import joblib
+    import os, subprocess, datetime
+    model = 'model.joblib'
+    joblib.dump(estimator, model)
+    model_path = os.path.join(gcspath, datetime.datetime.now().strftime('export_%Y%m%d_%H%M%S'), model)
+    subprocess.check_call(['gsutil', 'cp', model, model_path])
+    return model_path
