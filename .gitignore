@@ -10,6 +10,7 @@ __pycache__/
 .DS_Store
 env/test.yml
 *.egg-info
+*.pyc
 core
 MANIFEST
 model.joblib
