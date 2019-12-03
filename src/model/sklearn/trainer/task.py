@@ -1,7 +1,7 @@
 import argparse
+import hypertune
 import os
 
-#import hypertune
 import trainer.model as model
 
 if __name__ == '__main__':

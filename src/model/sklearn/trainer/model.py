@@ -1,6 +1,10 @@
+import os
+import subprocess
+import datetime
+import joblib
+import copy
 import google.cloud.bigquery as bigquery
 import pandas as pd
-import copy
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, TfidfTransformer
@@ -70,7 +74,7 @@ def train_and_evaluate(max_df, min_df, norm, alpha):
     train_X, train_y = input_fn(train_df)
     
     # train
-    pipeline=Pipeline([('Word Embedding', CountVectorizer(max_df=max_df, min_df=min_df)),
+    pipeline=Pipeline([('Word Embedding', CountVectorizer(max_df=max_df)),
                        ('Feature Transform', TfidfTransformer(norm=norm)),
                        ('Classifier', MultinomialNB(alpha=alpha))])
     pipeline.fit(train_X, train_y)
@@ -89,8 +93,7 @@ def train_and_evaluate(max_df, min_df, norm, alpha):
     return pipeline, acc_eval
 
 def save_model(estimator, gcspath, name):
-    from sklearn.externals import joblib
-    import os, subprocess, datetime
+    
     model = 'model.joblib'
     joblib.dump(estimator, model)
     model_path = os.path.join(gcspath, datetime.datetime.now().strftime('export_%Y%m%d_%H%M%S'), model)
