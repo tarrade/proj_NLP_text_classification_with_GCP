@@ -7,37 +7,38 @@ import trainer.model as model
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--bucket',
-        help = 'GCS path to output.',
-        required = True
+        '--WE_max_df',
+        help='Document frequency strictly higher than the given threshold',
+        type=float,
+        default=1.0
     )
-    #parser.add_argument(
-    #    '--frac',
-    #    help = 'Fraction of input to process',
-    #    type = float,
-    #    required = True
-    #)
-    #parser.add_argument(
-    #    '--maxDepth',
-    #    help = 'Depth of trees',
-    #    type = int,
-    #    default = 5
-    #)
-    #parser.add_argument(
-    #    '--numTrees',
-    #    help = 'Number of trees',
-    #    type = int,
-    #    default = 100
-    #)
     parser.add_argument(
-        '--projectId',
-        help = 'ID (not name) of your project',
-        required = True
+        '--WE_min_df',
+        help='Document frequency strictly lower than the given threshold',
+        type=float,
+        default=1.0
+    )        
+    parser.add_argument(
+        '--FT_norm',
+        help='Unit norm',
+        type=str,
+        default='l2'       
+    )
+    parser.add_argument(
+        '--M_alpha',
+        help='Additive smoothing parameter',
+        type=float,
+        default=1.0       
+    )    
+    parser.add_argument(
+        '--project-id',
+        help='ID (not name) of your project',
+        required=True
     )
     parser.add_argument(
         '--job-dir',
-        help = 'output directory for model, automatically provided by gcloud',
-        required = True
+        help='Output directory for model, automatically provided by gcloud',
+        required=True
     )
     
     args = parser.parse_args()
@@ -46,15 +47,20 @@ if __name__ == '__main__':
     #model.PROJECT = arguments['projectId']
     #model.KEYDIR  = 'trainer'
     
-    estimator = model.train_and_evaluate()
+    print(arguments)
+    
+    estimator, acc_eval = model.train_and_evaluate(arguments['WE_max_df'],
+                                                   arguments['WE_min_df'],
+                                                   arguments['FT_norm'],
+                                                   arguments['M_alpha'])
     
     loc = model.save_model(estimator, 
                            arguments['job_dir'], 'stackoverlow')
     print("Saved model to {}".format(loc))
     
     # this is for hyperparameter tuning
-    #hpt = hypertune.HyperTune()
-    #hpt.report_hyperparameter_tuning_metric(
-    #    hyperparameter_metric_tag='rmse',
-    #   metric_value=rmse,
-    #    global_step=0)
+    hpt = hypertune.HyperTune()
+    hpt.report_hyperparameter_tuning_metric(
+        hyperparameter_metric_tag='accuracy',
+        metric_value=acc_eval,
+        global_step=0)

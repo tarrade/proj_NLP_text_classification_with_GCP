@@ -1,7 +1,8 @@
 from setuptools import find_packages
 from setuptools import setup
 
-REQUIRED_PACKAGES = ['google-cloud-bigquery==1.19.0']
+REQUIRED_PACKAGES = ['google-cloud-bigquery==1.19.0',
+                     'cloudml-hypertune']
 
 #setup(name='trainer',
 #      version='1.0',

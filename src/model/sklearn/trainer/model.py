@@ -63,16 +63,16 @@ def input_fn(input_df):
     features = df['text']
     return features, label
 
-def train_and_evaluate():
+def train_and_evaluate(max_df, min_df, norm, alpha):
     
     # get data
     train_df, eval_df = create_dataframes()
     train_X, train_y = input_fn(train_df)
     
     # train
-    pipeline=Pipeline([('Word Embedding', CountVectorizer()),
-                       ('Feature Transform', TfidfTransformer()),
-                       ('Clasifier', MultinomialNB(alpha=0.1))])
+    pipeline=Pipeline([('Word Embedding', CountVectorizer(max_df=max_df, min_df=min_df)),
+                       ('Feature Transform', TfidfTransformer(norm=norm)),
+                       ('Classifier', MultinomialNB(alpha=alpha))])
     pipeline.fit(train_X, train_y)
    
     # evaluate
@@ -80,10 +80,13 @@ def train_and_evaluate():
     eval_y_pred = pipeline.predict(eval_X)
     train_y_pred = pipeline.predict(train_X)
 
-    print('accuracy on test set: \n {} % \n'.format(accuracy_score(eval_y,eval_y_pred)))
+    # define the score we want to use to evaluate the classifier on
+    acc_eval = accuracy_score(eval_y,eval_y_pred)
+
+    print('accuracy on test set: \n {} % \n'.format(acc_eval))
     print('accuracy on train set: \n {} % \n'.format(accuracy_score(train_y,train_y_pred)))
-    
-    return pipeline
+
+    return pipeline, acc_eval
 
 def save_model(estimator, gcspath, name):
     from sklearn.externals import joblib
