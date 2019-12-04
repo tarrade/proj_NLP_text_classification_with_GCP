@@ -35,7 +35,7 @@ SELECT
   body,
   tags
 FROM
-  `nlp-text-classification.{table_name}`
+  `nlp-text-classification.stackoverflow.posts_p1_subset`
 """.format(table_name=table_name)
     return query
 
@@ -122,7 +122,7 @@ def preprocess():
                                                     create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
         str_values = clean_text   | "Post Records to Text" >> beam.ParDo(pp.CSV())
 
-        str_values                | "Write Posts to GCS"  >> beam.io.WriteToText(output_dir+'results/posts',
+        str_values                | "Write Posts to GCS"  >> beam.io.WriteToText(output_dir+'results/{0}'.format(user_options.input),
                                                     file_name_suffix='.csv', 
                                                     header='id, title, text_body, code_body, tags')
 
@@ -146,4 +146,4 @@ if __name__ == '__main__':
 # python3 beam-pipeline.py
 # python3 beam-pipeline.py --runner DataflowRunner --no_use_public_ips --subnetwork
 
-#python3 -m preprocessing_template --runner DataflowRunner --project nlp-text-classification --staging_location gs://nlp-text-classification/beam/stage --temp_location gs://nlp-text-classification/beam/temp --template_location gs://nlp-text-classification/beam/template --save_main_session True
+#python3 -m preprocessing_template --runner DataflowRunner --project nlp-text-classification --staging_location gs://nlp-text-classification/beam/stage --temp_location gs://nlp-text-classification/beam/temp --template_location gs://nlp-text-classification/beam/template/text-cleaning

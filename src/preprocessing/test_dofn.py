@@ -36,7 +36,7 @@ class NLP():
     
     def remove_punctuation(self, input_str: str) -> str:
         str_punctuation = re.sub('''[!"#$%&\\\\'()*+,-./:;<=>?@[\\]^_`{|}~]+''', ' ', input_str)
-        str_white_space = re.sub('''\s+''', ' ', str_punctuation)
+        str_white_space = re.sub('''\\s+''', ' ', str_punctuation)
         tokens = str_white_space.split(' ')
         output_list = [token for token in tokens if len(token) > 1]
         return ' '.join(output_list)
@@ -79,7 +79,7 @@ def dofn():
                          ]
                          )
 def test_decode_html(dofn, input_str, clean_string_1, clean_string_2):
-    assert dofn.decode_html(input) == (clean_string_1, clean_string_2)
+    assert dofn.decode_html(input_str) == (clean_string_1, clean_string_2)
     
 @pytest.mark.parametrize('raw_string, cut_string',
                          [
