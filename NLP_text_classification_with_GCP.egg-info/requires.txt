@@ -1,5 +1,0 @@
-apache-beam[gcp]==2.16.0
-beautifulsoup4==4.8.1
-spacy==2.2.3
-unidecode==1.1.1
-en_core_web_sm@ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.2.5/en_core_web_sm-2.2.5.tar.gz

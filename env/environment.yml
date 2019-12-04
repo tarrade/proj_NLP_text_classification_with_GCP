@@ -3,13 +3,13 @@ channels:
 - defaults
 - conda-forge
 - districtdatalabs
-- plotly
 dependencies:
 # core packages
 - python=3.6.9
 - ipykernel=5.1.2
 - pip=19.2.3
 - nbdime=1.1.0
+- joblib=0.14.0
 # data processing
 - numpy=1.17.2
 - pandas=0.25.1
@@ -83,6 +83,7 @@ dependencies:
   - tf-explain==0.0.2a0
   - tensorflow_io
   - tensorflow-addons==0.6.0
+  - cloudml-hypertune==0.1.0.dev5
   # machine learning - nlp
   - bert-tensorflow==1.0.1
   # machine learning - nlp
