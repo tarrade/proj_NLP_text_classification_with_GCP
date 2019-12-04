@@ -16,7 +16,7 @@ if __name__ == '__main__':
         '--WE_min_df',
         help='Document frequency strictly lower than the given threshold',
         type=float,
-        default=1.0
+        default=1
     )        
     parser.add_argument(
         '--FT_norm',
@@ -31,7 +31,7 @@ if __name__ == '__main__':
         default=1.0       
     )    
     parser.add_argument(
-        '--project-id',
+        '--project_id',
         help='ID (not name) of your project',
         required=True
     )

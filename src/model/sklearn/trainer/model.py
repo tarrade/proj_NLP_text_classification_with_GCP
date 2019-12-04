@@ -74,7 +74,7 @@ def train_and_evaluate(max_df, min_df, norm, alpha):
     train_X, train_y = input_fn(train_df)
     
     # train
-    pipeline=Pipeline([('Word Embedding', CountVectorizer(max_df=max_df)),
+    pipeline=Pipeline([('Word Embedding', CountVectorizer(max_df=max_df,min_df=min_df)),
                        ('Feature Transform', TfidfTransformer(norm=norm)),
                        ('Classifier', MultinomialNB(alpha=alpha))])
     pipeline.fit(train_X, train_y)
