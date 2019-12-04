@@ -7,6 +7,18 @@ import trainer.model as model
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        '--eval_size',
+        help = 'Size for the evaluation set in %',
+        type = float,
+        default=20.
+    )
+    parser.add_argument(
+        '--frac',
+        help = 'Fraction of input to process',
+        type = float,
+        default=0.0001
+    )
+    parser.add_argument(
         '--WE_max_df',
         help='Document frequency strictly higher than the given threshold',
         type=float,
@@ -49,7 +61,9 @@ if __name__ == '__main__':
     
     print(arguments)
     
-    estimator, acc_eval = model.train_and_evaluate(arguments['WE_max_df'],
+    estimator, acc_eval = model.train_and_evaluate(arguments['eval_size'],
+                                                   arguments['frac'],
+                                                   arguments['WE_max_df'],
                                                    arguments['WE_min_df'],
                                                    arguments['FT_norm'],
                                                    arguments['M_alpha'])

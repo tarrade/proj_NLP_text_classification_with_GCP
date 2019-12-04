@@ -15,18 +15,26 @@ from sklearn.metrics import (
     accuracy_score
 )
 
-#PROJECT = None
-#KEYDIR  = 'trainer'
+def create_queries(eval_size):
+    #query = """
+    #SELECT
+    #*
+    #FROM
+    #`nlp-text-classification.stackoverflow.posts_preprocessed_selection_subset`
+    #"""
 
-def create_queries():
     query = """
     SELECT
-    *
+      *
     FROM
-    `nlp-text-classification.stackoverflow.posts_preprocessed_selection_subset`
+      `nlp-text-classification.stackoverflow.posts_preprocessed`    
     """
     
-    return query
+    eval_query = "{} WHERE MOD(ABS(FARM_FINGERPRINT(CAST(id as STRING))),100) < {}".format(query, eval_size)
+    train_query  = "{} WHERE MOD(ABS(FARM_FINGERPRINT(CAST(id as STRING))),100)>= {}".format(query, eval_size)
+  
+    return train_query, eval_query
+    
 
 def query_to_dataframe(query):
     
@@ -47,15 +55,30 @@ def query_to_dataframe(query):
     df.set_index('id',inplace=True)
     
     return df
-    
-def create_dataframes():   
 
-    df = query_to_dataframe(create_queries())
+
+def create_dataframes(frac, eval_size):   
 
     # split in df in training and testing
-    train_df, eval_df = train_test_split(df, test_size=0.2, random_state=101010)
+    #train_df, eval_df = train_test_split(df, test_size=0.2, random_state=101010)
     
+    # small dataset for testing
+    if frac > 0 and frac < 1:
+        sample = " AND RAND() < {}".format(frac)
+    else:
+        sample = ""
+
+    train_query, eval_query = create_queries(eval_size)
+    train_query = "{} {}".format(train_query, sample)
+    eval_query =  "{} {}".format(eval_query, sample)
+
+    train_df = query_to_dataframe(train_query)
+    eval_df = query_to_dataframe(eval_query)
+    
+    print('size of the training set  :',len(train_df ))
+    print('size of the evaluation set:',len(eval_df ))
     return train_df, eval_df
+
 
 def input_fn(input_df):
     df = copy.deepcopy(input_df)
@@ -67,16 +90,14 @@ def input_fn(input_df):
     features = df['text']
     return features, label
 
-def train_and_evaluate(max_df, min_df, norm, alpha):
+def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha):
     
     # transforming data type from YAML to python
     if norm=='None': norm=None 
     if min_df==1.0: min_df=1
     
-    print(norm, min_df)
-    
     # get data
-    train_df, eval_df = create_dataframes()
+    train_df, eval_df = create_dataframes(frac, eval_size)
     train_X, train_y = input_fn(train_df)
     
     # train
