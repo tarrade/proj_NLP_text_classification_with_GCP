@@ -69,6 +69,12 @@ def input_fn(input_df):
 
 def train_and_evaluate(max_df, min_df, norm, alpha):
     
+    # transforming data type from YAML to python
+    if norm=='None': norm=None 
+    if min_df==1.0: min_df=1
+    
+    print(norm, min_df)
+    
     # get data
     train_df, eval_df = create_dataframes()
     train_X, train_y = input_fn(train_df)

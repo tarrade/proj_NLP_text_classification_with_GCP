@@ -20,7 +20,7 @@ trainingInput:
       scaleType: UNIT_LINEAR_SCALE
     - parameterName: FT_norm
       type: CATEGORICAL
-      categoricalValues: ['l1','l2']
+      categoricalValues: ['l1', 'l2', 'None']
     - parameterName: M_alpha
       type: DOUBLE
       minValue: 0.0
