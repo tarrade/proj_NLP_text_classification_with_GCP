@@ -1,4 +1,6 @@
 trainingInput:
+  scaleTier: CUSTOM
+  masterType: n1-highmem-8
   hyperparameters:
     algorithm: ALGORITHM_UNSPECIFIED
     goal: MAXIMIZE

@@ -77,6 +77,7 @@ def create_dataframes(frac, eval_size):
     
     print('size of the training set  :',len(train_df ))
     print('size of the evaluation set:',len(eval_df ))
+    print(train_df.info(memory_usage="deep"))
     return train_df, eval_df
 
 
