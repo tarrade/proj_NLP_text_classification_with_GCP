@@ -151,4 +151,4 @@ if __name__ == '__main__':
 # python3 beam-pipeline.py
 # python3 beam-pipeline.py --runner DataflowRunner --no_use_public_ips --subnetwork
 
-#python3 -m preprocessing_template --runner DataflowRunner --project nlp-text-classification --staging_location gs://nlp-text-classification/beam/stage --temp_location gs://nlp-text-classification/beam/temp --template_location gs://nlp-text-classification/beam/template/text-cleaning
+#python3 -m preprocessing_template --runner DataflowRunner --project nlp-text-classification --staging_location gs://nlp-text-classification/beam/stage --temp_location gs://nlp-text-classification/beam/temp --template_location gs://nlp-text-classification/beam/template/text-cleaning --experiment=use_beam_bq_sink
