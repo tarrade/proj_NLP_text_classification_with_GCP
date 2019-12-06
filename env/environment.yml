@@ -32,7 +32,7 @@ dependencies:
 - tpot=0.10.2
 - yellowbrick=0.9.1
 - lime=0.1.1.36
-- scikit-learn=0.21.3
+- scikit-learn=0.22
 - scikit-plot=0.3.7
 - scikit-optimize=0.5.2
 - bayesian-optimization=1.0.1

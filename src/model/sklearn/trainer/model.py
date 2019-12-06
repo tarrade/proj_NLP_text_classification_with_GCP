@@ -144,10 +144,72 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha):
     print(' ')
     
     # train
-    pipeline=Pipeline([('Word Embedding', CountVectorizer(max_df=max_df,min_df=min_df)),
-                       ('Feature Transform', TfidfTransformer(norm=norm)),
-                       ('Classifier', MultinomialNB(alpha=alpha))])
-    pipeline.fit(train_X, train_y)
+    cv = CountVectorizer(max_df=max_df,min_df=min_df).fit(train_X)
+    word_count_vector =cv.transform(train_X)
+    print('cv shape', word_count_vector.shape)
+    voc=cv.vocabulary_
+    voc_list=sorted(voc.items(), key=lambda kv: kv[1], reverse=True)
+    print(' --> length of the vocabulary vector : \n{} {} \n'.format(len(voc), len(cv.get_feature_names())))
+    print(voc_list)
+    
+    mem = psutil.virtual_memory()
+    print('----> after CountVectorizer ....')
+    print('### Memory total     {:.2f} Gb'.format(mem.total/1024**3))
+    print('### Memory percent   {:.2f} %'.format(mem.percent))
+    print('### Memory available {:.2f} Gb'.format(mem.available/1024**3))
+    print('### Memory used      {:.2f} Gb'.format(mem.used/1024**3))
+    print('### Memory free      {:.2f} Gb'.format(mem.free/1024**3))
+    print('### Memory active    {:.2f} Gb'.format(mem.active/1024**3))
+    print('### Memory inactive  {:.2f} Gb'.format(mem.inactive/1024**3))
+    print('### Memory buffers   {:.2f} Gb'.format(mem.buffers/1024**3))      
+    print('### Memory cached    {:.2f} Gb'.format(mem.cached/1024**3))    
+    print('### Memory shared    {:.2f} Gb'.format(mem.shared/1024**3))   
+    print('### Memory slab      {:.2f} Gb'.format(mem.slab/1024**3)) 
+    print(' ')
+    
+    tfidf_transformer= TfidfTransformer(norm=norm).fit(word_count_vector)
+    tfidf_vector=tfidf_transformer.transform(word_count_vector)
+    print('cv tfidf', tfidf_vector.shape)
+    print(tfidf_vector)
+    print('----> after  TfidfTransformer ....')
+    print('### Memory total     {:.2f} Gb'.format(mem.total/1024**3))
+    print('### Memory percent   {:.2f} %'.format(mem.percent))
+    print('### Memory available {:.2f} Gb'.format(mem.available/1024**3))
+    print('### Memory used      {:.2f} Gb'.format(mem.used/1024**3))
+    print('### Memory free      {:.2f} Gb'.format(mem.free/1024**3))
+    print('### Memory active    {:.2f} Gb'.format(mem.active/1024**3))
+    print('### Memory inactive  {:.2f} Gb'.format(mem.inactive/1024**3))
+    print('### Memory buffers   {:.2f} Gb'.format(mem.buffers/1024**3))      
+    print('### Memory cached    {:.2f} Gb'.format(mem.cached/1024**3))    
+    print('### Memory shared    {:.2f} Gb'.format(mem.shared/1024**3))   
+    print('### Memory slab      {:.2f} Gb'.format(mem.slab/1024**3)) 
+    print(' ')
+    
+    pipeline = MultinomialNB(alpha=alpha).fit(tfidf_vector, train_y)
+    train_y_pred = pipeline.predict(tfidf_vector)
+    
+    word_count_vector =cv.transform(eval_X)
+    tfidf_vector=tfidf_transformer.transform(word_count_vector)
+    eval_y_pred = pipeline.predict(tfidf_vector)
+    
+    print('----> after MultinomialNB ....')
+    print('### Memory total     {:.2f} Gb'.format(mem.total/1024**3))
+    print('### Memory percent   {:.2f} %'.format(mem.percent))
+    print('### Memory available {:.2f} Gb'.format(mem.available/1024**3))
+    print('### Memory used      {:.2f} Gb'.format(mem.used/1024**3))
+    print('### Memory free      {:.2f} Gb'.format(mem.free/1024**3))
+    print('### Memory active    {:.2f} Gb'.format(mem.active/1024**3))
+    print('### Memory inactive  {:.2f} Gb'.format(mem.inactive/1024**3))
+    print('### Memory buffers   {:.2f} Gb'.format(mem.buffers/1024**3))      
+    print('### Memory cached    {:.2f} Gb'.format(mem.cached/1024**3))    
+    print('### Memory shared    {:.2f} Gb'.format(mem.shared/1024**3))   
+    print('### Memory slab      {:.2f} Gb'.format(mem.slab/1024**3)) 
+    print(' ')
+    
+    #pipeline=Pipeline([('Word Embedding', CountVectorizer(max_df=max_df,min_df=min_df)),
+    #                   ('Feature Transform', TfidfTransformer(norm=norm)),
+    #                   ('Classifier', MultinomialNB(alpha=alpha))])
+    #pipeline.fit(train_X, train_y)
     
     #print('the list of steps and parameters in the pipeline\n')
     #for k, v in pipeline.named_steps.items():
@@ -230,20 +292,20 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha):
     #print(' ')
     
     # evaluate
-    train_y_pred = pipeline.predict(train_X)
+    #train_y_pred = pipeline.predict(train_X)
     
     # define the score we want to use to evaluate the classifier on
     acc_train = accuracy_score(train_y,train_y_pred)
     
-    del train_X
+    #del train_X
     
     # evaluate
-    eval_y_pred = pipeline.predict(eval_X)
+    #eval_y_pred = pipeline.predict(eval_X)
     
     # define the score we want to use to evaluate the classifier on
     acc_eval = accuracy_score(eval_y,eval_y_pred)
     
-    del eval_X
+    #del eval_X
     
     print('accuracy on test set: \n {} % \n'.format(acc_eval))
     print('accuracy on train set: \n {} % \n'.format(acc_train))
