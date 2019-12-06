@@ -27,7 +27,7 @@ def create_queries(eval_size):
     SELECT
       *
     FROM
-      `nlp-text-classification.stackoverflow.posts_preprocessed`    
+      `nlp-text-classification.stackoverflow.posts_preprocessed_selection`    
     """
     
     eval_query = "{} WHERE MOD(ABS(FARM_FINGERPRINT(CAST(id as STRING))),100) < {}".format(query, eval_size)
