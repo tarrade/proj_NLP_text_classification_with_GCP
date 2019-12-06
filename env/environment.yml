@@ -67,6 +67,8 @@ dependencies:
 - google-resumable-media=0.3.3
 - googleapis-common-protos=1.6.0
 - pip:
+  # base
+  - psutil
   # data processing
   - apache-beam[gcp]==2.16.0
   - bs4==0.0.1
