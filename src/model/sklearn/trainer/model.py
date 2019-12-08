@@ -3,6 +3,8 @@ import psutil
 import subprocess
 import datetime
 import joblib
+from collections import Counter
+import operator
 import copy
 import pprint
 import google.cloud.bigquery as bigquery
@@ -17,15 +19,10 @@ from sklearn.metrics import (
     confusion_matrix,
     accuracy_score
 )
+import trainer.utils as utils
 
 def create_queries(eval_size):
-    #query = """
-    #SELECT
-    #*
-    #FROM
-    #`nlp-text-classification.stackoverflow.posts_preprocessed_selection_subset`
-    #"""
-
+    
     query = """
     SELECT
       *
@@ -38,15 +35,46 @@ def create_queries(eval_size):
   
     return train_query, eval_query
     
+def create_queries_subset(eval_size):
+    query = """
+    SELECT
+      *
+    FROM
+      `nlp-text-classification.stackoverflow.posts_preprocessed_selection_subset`
+    """
+    
+    eval_query = "{} WHERE MOD(ABS(FARM_FINGERPRINT(CAST(id as STRING))),100) < {}".format(query, eval_size)
+    train_query  = "{} WHERE MOD(ABS(FARM_FINGERPRINT(CAST(id as STRING))),100)>= {}".format(query, eval_size)
+  
+    return train_query, eval_query
 
-def query_to_dataframe(query):
+def build_tag(row, list_tags):
+    for idx, val in enumerate(row):
+        if val not in list_tags:
+            del row[idx]
+    return row
+
+def query_to_dataframe(query,is_training,tags):
     
     client = bigquery.Client()
     df = client.query(query).to_dataframe()
     
     # label
-    df['label'] = df['tags'].apply(lambda row: ",".join(row))
+    if is_training:
+        tags=df['tags'].sum()
+        unique_tags = dict(Counter(tags))
+        unique_tags = sorted(unique_tags.items(), key=operator.itemgetter(1))
+        unique_tags.reverse()
+        keep_tags=[x[0] for x in unique_tags][0:10]
+    else:
+        keep_tags=tags
+    
+    df['tags'] = df['tags'].apply(lambda x: build_tag(x, keep_tags))
+    df['label'] = df['tags'].apply(lambda x: x[0] if len(x)>0 else 'other-tags')
+    #df['label'] = df['tags'].apply(lambda row: ",".join(row))
     del df['tags']
+    
+    print(df['label'].unique())
     
     # features
     df['text'] = df['title'] + df['text_body'] + df['code_body']
@@ -57,7 +85,7 @@ def query_to_dataframe(query):
     # use BigQuery index
     df.set_index('id',inplace=True)
     
-    return df
+    return df, keep_tags
 
 
 def create_dataframes(frac, eval_size):   
@@ -74,33 +102,15 @@ def create_dataframes(frac, eval_size):
     train_query, eval_query = create_queries(eval_size)
     train_query = "{} {}".format(train_query, sample)
     eval_query =  "{} {}".format(eval_query, sample)
-
-    train_df = query_to_dataframe(train_query)
-    eval_df = query_to_dataframe(eval_query)
     
-    print('size of the training set  :',len(train_df ))
-    print('size of the evaluation set:',len(eval_df ))
-    print(train_df.info(memory_usage="deep"))
+    keep_tags,train_df = query_to_dataframe(train_query, True, '')
+    _, eval_df = query_to_dataframe(eval_query, False, keep_tags)
     
-    print('### CPU (count) {}'.format(psutil.cpu_count()))
-    print('### CPU (count) {}'.format(psutil.cpu_count(logical=False)))
-    print('### CPU (count) {}'.format(len(psutil.Process().cpu_affinity())))
-    
-    mem = psutil.virtual_memory()
-    print(mem)
-    print('### Memory total     {:.2f} Gb'.format(mem.total/1024**3))
-    print('### Memory percent   {:.2f} %'.format(mem.percent))
-    print('### Memory available {:.2f} Gb'.format(mem.available/1024**3))
-    print('### Memory used      {:.2f} Gb'.format(mem.used/1024**3))
-    print('### Memory free      {:.2f} Gb'.format(mem.free/1024**3))
-    print('### Memory active    {:.2f} Gb'.format(mem.active/1024**3))
-    print('### Memory inactive  {:.2f} Gb'.format(mem.inactive/1024**3))
-    print('### Memory buffers   {:.2f} Gb'.format(mem.buffers/1024**3))      
-    print('### Memory cached    {:.2f} Gb'.format(mem.cached/1024**3))    
-    print('### Memory shared    {:.2f} Gb'.format(mem.shared/1024**3))   
-    print('### Memory slab      {:.2f} Gb'.format(mem.slab/1024**3)) 
-    print(' ')
-    
+    print('size of the training set          : {:,}'.format(len(train_df )))
+    print('number of labels in training set  : {:,}'.format(len(train_df['label'].unique())))
+    print('size of the evaluation set        : {:,}'.format(len(eval_df)))
+    print('number of labels in evaluation set: {:,}'.format(len(eval_df['label'].unique())))
+                                                              
     return train_df, eval_df
 
 
@@ -116,74 +126,59 @@ def input_fn(df):
 
 def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha):
     
+    # print cpu info
+    print('\n---> CPU ')
+    utils.info_cpu()
+    
+    # print mem info
+    utils.info_details_mem(text='---> details memory info: start')
+    
+   # print mem info
+    utils.info_mem(text=' ---> memory info: start')
+    
     # transforming data type from YAML to python
     if norm=='None': norm=None 
     if min_df==1.0: min_df=1
     
     # get data
     train_df, eval_df = create_dataframes(frac, eval_size)
+    utils.mem_df(train_df, text='\n---> memory training dataset')
+    utils.mem_df(eval_df, text='\n---> memory evalution dataset')
+
+    
     train_X, train_y = input_fn(train_df)
     eval_X, eval_y = input_fn(eval_df)
+    
+    print('\nlist tags training  : {:,}'.format(train_df['label'].unique()))
+    print('\nlist tags evaluation: {:,}'.format(eval_df['label'].unique()))
     del train_df
     del eval_df
     
-    mem = psutil.virtual_memory()
-    print('----> memory before scikit-learn training ...')
-    print(mem) 
-    print('### Memory total     {:.2f} Gb'.format(mem.total/1024**3))
-    print('### Memory percent   {:.2f} %'.format(mem.percent))
-    print('### Memory available {:.2f} Gb'.format(mem.available/1024**3))
-    print('### Memory used      {:.2f} Gb'.format(mem.used/1024**3))
-    print('### Memory free      {:.2f} Gb'.format(mem.free/1024**3))
-    print('### Memory active    {:.2f} Gb'.format(mem.active/1024**3))
-    print('### Memory inactive  {:.2f} Gb'.format(mem.inactive/1024**3))
-    print('### Memory buffers   {:.2f} Gb'.format(mem.buffers/1024**3))      
-    print('### Memory cached    {:.2f} Gb'.format(mem.cached/1024**3))    
-    print('### Memory shared    {:.2f} Gb'.format(mem.shared/1024**3))   
-    print('### Memory slab      {:.2f} Gb'.format(mem.slab/1024**3)) 
-    print(' ')
+    
+    # print mem info
+    utils.info_mem(text='\n---> memory info: after creation dataframe')
     
     # train
-    cv = CountVectorizer(max_df=max_df,min_df=min_df).fit(train_X)
+    cv = CountVectorizer(max_df=max_df,min_df=min_df,max_features=10000).fit(train_X)
     word_count_vector =cv.transform(train_X)
-    print('cv shape', word_count_vector.shape)
+    print(' ---> Size CountVectorizer matrix')
+    print('number of row {:,}'.format(word_count_vector.shape[0]))
+    print('number of col {:,}'.format(word_count_vector.shape[1]))
     voc=cv.vocabulary_
     voc_list=sorted(voc.items(), key=lambda kv: kv[1], reverse=True)
-    print(' --> length of the vocabulary vector : \n{} {} \n'.format(len(voc), len(cv.get_feature_names())))
-    print(voc_list)
+    print(' --> length of the vocabulary vector: {:,}'.format(len(cv.get_feature_names())))
+    #print(voc_list)
     
-    mem = psutil.virtual_memory()
-    print('----> after CountVectorizer ....')
-    print('### Memory total     {:.2f} Gb'.format(mem.total/1024**3))
-    print('### Memory percent   {:.2f} %'.format(mem.percent))
-    print('### Memory available {:.2f} Gb'.format(mem.available/1024**3))
-    print('### Memory used      {:.2f} Gb'.format(mem.used/1024**3))
-    print('### Memory free      {:.2f} Gb'.format(mem.free/1024**3))
-    print('### Memory active    {:.2f} Gb'.format(mem.active/1024**3))
-    print('### Memory inactive  {:.2f} Gb'.format(mem.inactive/1024**3))
-    print('### Memory buffers   {:.2f} Gb'.format(mem.buffers/1024**3))      
-    print('### Memory cached    {:.2f} Gb'.format(mem.cached/1024**3))    
-    print('### Memory shared    {:.2f} Gb'.format(mem.shared/1024**3))   
-    print('### Memory slab      {:.2f} Gb'.format(mem.slab/1024**3)) 
-    print(' ')
+    # print mem info
+    utils.info_mem(text=' ---> memory info: after CountVectorizer')
     
     tfidf_transformer= TfidfTransformer(norm=norm).fit(word_count_vector)
     tfidf_vector=tfidf_transformer.transform(word_count_vector)
     print('cv tfidf', tfidf_vector.shape)
-    print(tfidf_vector)
-    print('----> after  TfidfTransformer ....')
-    print('### Memory total     {:.2f} Gb'.format(mem.total/1024**3))
-    print('### Memory percent   {:.2f} %'.format(mem.percent))
-    print('### Memory available {:.2f} Gb'.format(mem.available/1024**3))
-    print('### Memory used      {:.2f} Gb'.format(mem.used/1024**3))
-    print('### Memory free      {:.2f} Gb'.format(mem.free/1024**3))
-    print('### Memory active    {:.2f} Gb'.format(mem.active/1024**3))
-    print('### Memory inactive  {:.2f} Gb'.format(mem.inactive/1024**3))
-    print('### Memory buffers   {:.2f} Gb'.format(mem.buffers/1024**3))      
-    print('### Memory cached    {:.2f} Gb'.format(mem.cached/1024**3))    
-    print('### Memory shared    {:.2f} Gb'.format(mem.shared/1024**3))   
-    print('### Memory slab      {:.2f} Gb'.format(mem.slab/1024**3)) 
-    print(' ')
+    #print(tfidf_vector)
+
+    # print mem info
+    utils.info_mem(text=' ---> memory info: after TfidfTransformer')
     
     pipeline = MultinomialNB(alpha=alpha).fit(tfidf_vector, train_y)
     train_y_pred = pipeline.predict(tfidf_vector)
@@ -192,19 +187,8 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha):
     tfidf_vector=tfidf_transformer.transform(word_count_vector)
     eval_y_pred = pipeline.predict(tfidf_vector)
     
-    print('----> after MultinomialNB ....')
-    print('### Memory total     {:.2f} Gb'.format(mem.total/1024**3))
-    print('### Memory percent   {:.2f} %'.format(mem.percent))
-    print('### Memory available {:.2f} Gb'.format(mem.available/1024**3))
-    print('### Memory used      {:.2f} Gb'.format(mem.used/1024**3))
-    print('### Memory free      {:.2f} Gb'.format(mem.free/1024**3))
-    print('### Memory active    {:.2f} Gb'.format(mem.active/1024**3))
-    print('### Memory inactive  {:.2f} Gb'.format(mem.inactive/1024**3))
-    print('### Memory buffers   {:.2f} Gb'.format(mem.buffers/1024**3))      
-    print('### Memory cached    {:.2f} Gb'.format(mem.cached/1024**3))    
-    print('### Memory shared    {:.2f} Gb'.format(mem.shared/1024**3))   
-    print('### Memory slab      {:.2f} Gb'.format(mem.slab/1024**3)) 
-    print(' ')
+    # print mem info
+    utils.info_mem(text=' ---> memory info: after model training')
     
     #pipeline=Pipeline([('Word Embedding', CountVectorizer(max_df=max_df,min_df=min_df)),
     #                   ('Feature Transform', TfidfTransformer(norm=norm)),
@@ -306,6 +290,9 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha):
     acc_eval = accuracy_score(eval_y,eval_y_pred)
     
     #del eval_X
+    
+    # print mem info
+    utils.info_mem(text='---> memory info: after model evaluation')
     
     print('accuracy on test set: \n {} % \n'.format(acc_eval))
     print('accuracy on train set: \n {} % \n'.format(acc_train))
