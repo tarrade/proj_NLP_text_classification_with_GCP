@@ -19,6 +19,12 @@ if __name__ == '__main__':
         default=0.0001
     )
     parser.add_argument(
+        '--max_nb_label',
+        help = 'Maximum number of labels',
+        type = int,
+        default=1000
+    )
+    parser.add_argument(
         '--WE_max_df',
         help='Document frequency strictly higher than the given threshold',
         type=float,
@@ -66,7 +72,8 @@ if __name__ == '__main__':
                                                    arguments['WE_max_df'],
                                                    arguments['WE_min_df'],
                                                    arguments['FT_norm'],
-                                                   arguments['M_alpha'])
+                                                   arguments['M_alpha'],
+                                                   arguments['max_nb_label'])
     
     loc = model.save_model(estimator, 
                            arguments['job_dir'], 'stackoverlow')

@@ -49,12 +49,14 @@ def create_queries_subset(eval_size):
     return train_query, eval_query
 
 def build_tag(row, list_tags):
+    new_list=[]
     for idx, val in enumerate(row):
-        if val not in list_tags:
-            del row[idx]
-    return row
+        if val in list_tags:
+            new_list.append(val)
+    del row
+    return new_list
 
-def query_to_dataframe(query,is_training,tags):
+def query_to_dataframe(query, is_training, tags, nb_label):
     
     client = bigquery.Client()
     df = client.query(query).to_dataframe()
@@ -65,16 +67,26 @@ def query_to_dataframe(query,is_training,tags):
         unique_tags = dict(Counter(tags))
         unique_tags = sorted(unique_tags.items(), key=operator.itemgetter(1))
         unique_tags.reverse()
-        keep_tags=[x[0] for x in unique_tags][0:10]
+        max_nb_label=len(unique_tags)+1
+        if nb_label>max_nb_label: nb_label=max_nb_label
+        keep_tags=[x[0] for x in unique_tags][0:nb_label]
     else:
         keep_tags=tags
     
+    if is_training:
+        print('list of labels to be used\n',keep_tags)
+        print('number of labels',len(keep_tags))
+        print('max number of labels set',nb_label)
+        
+    #print(df['tags'])
     df['tags'] = df['tags'].apply(lambda x: build_tag(x, keep_tags))
+    #print(df['tags'])
     df['label'] = df['tags'].apply(lambda x: x[0] if len(x)>0 else 'other-tags')
+    #print(df['label'])
     #df['label'] = df['tags'].apply(lambda row: ",".join(row))
     del df['tags']
     
-    print(df['label'].unique())
+    #print('list tags {}'.format(df['label'].unique()))
     
     # features
     df['text'] = df['title'] + df['text_body'] + df['code_body']
@@ -85,10 +97,10 @@ def query_to_dataframe(query,is_training,tags):
     # use BigQuery index
     df.set_index('id',inplace=True)
     
-    return df, keep_tags
+    return keep_tags, df
 
 
-def create_dataframes(frac, eval_size):   
+def create_dataframes(frac, eval_size, nb_label):   
 
     # split in df in training and testing
     #train_df, eval_df = train_test_split(df, test_size=0.2, random_state=101010)
@@ -103,13 +115,16 @@ def create_dataframes(frac, eval_size):
     train_query = "{} {}".format(train_query, sample)
     eval_query =  "{} {}".format(eval_query, sample)
     
-    keep_tags,train_df = query_to_dataframe(train_query, True, '')
-    _, eval_df = query_to_dataframe(eval_query, False, keep_tags)
+    keep_tags,train_df = query_to_dataframe(train_query, True, '', nb_label)
+    _, eval_df = query_to_dataframe(eval_query, False, keep_tags, nb_label)
     
     print('size of the training set          : {:,}'.format(len(train_df )))
-    print('number of labels in training set  : {:,}'.format(len(train_df['label'].unique())))
     print('size of the evaluation set        : {:,}'.format(len(eval_df)))
-    print('number of labels in evaluation set: {:,}'.format(len(eval_df['label'].unique())))
+    
+    print('number of labels in training set  : {}'.format(len(train_df['label'].unique())))
+    print('number of labels in evaluation set: {}'.format(len(eval_df['label'].unique())))
+    #print('\nlist tags training  : {}'.format(train_df['label'].unique()))
+    #print('\nlist tags evaluation: {}'.format(eval_df['label'].unique()))
                                                               
     return train_df, eval_df
 
@@ -124,7 +139,7 @@ def input_fn(df):
     features = df['text']
     return features, label
 
-def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha):
+def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
     
     # print cpu info
     print('\n---> CPU ')
@@ -141,16 +156,13 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha):
     if min_df==1.0: min_df=1
     
     # get data
-    train_df, eval_df = create_dataframes(frac, eval_size)
+    train_df, eval_df = create_dataframes(frac, eval_size, nb_label)
     utils.mem_df(train_df, text='\n---> memory training dataset')
     utils.mem_df(eval_df, text='\n---> memory evalution dataset')
 
-    
     train_X, train_y = input_fn(train_df)
     eval_X, eval_y = input_fn(eval_df)
     
-    print('\nlist tags training  : {:,}'.format(train_df['label'].unique()))
-    print('\nlist tags evaluation: {:,}'.format(eval_df['label'].unique()))
     del train_df
     del eval_df
     
