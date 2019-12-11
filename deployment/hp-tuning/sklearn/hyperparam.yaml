@@ -1,10 +1,9 @@
 trainingInput:
-  scaleTier: CUSTOM
-  masterType: n1-highmem-8
+  scaleTier: STANDARD_1
   hyperparameters:
     algorithm: ALGORITHM_UNSPECIFIED
     goal: MAXIMIZE
-    maxTrials: 10
+    maxTrials: 50
     maxParallelTrials: 5
     enableTrialEarlyStopping: TRUE 
     maxFailedTrials: 1
