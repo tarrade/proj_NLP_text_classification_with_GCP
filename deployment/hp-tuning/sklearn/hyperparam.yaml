@@ -16,8 +16,8 @@ trainingInput:
       scaleType: UNIT_LINEAR_SCALE
     - parameterName: WE_min_df
       type: DOUBLE
-      minValue: 0
-      maxValue: 0.3
+      minValue: 1.0
+      maxValue: 1.0
       scaleType: UNIT_LINEAR_SCALE
     - parameterName: FT_norm
       type: CATEGORICAL
