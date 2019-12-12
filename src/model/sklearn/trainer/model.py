@@ -3,11 +3,13 @@ import psutil
 import subprocess
 import datetime
 import joblib
+import re
 from collections import Counter
 import operator
 import copy
 import pprint
 import google.cloud.bigquery as bigquery
+from google.cloud import storage
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -313,8 +315,24 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
 
 def save_model(estimator, gcspath, name):
     
+    gcspath = re.sub('^gs:\/\/', '', gcspath)
+    
+    if len(gcspath.split('/'))<2:
+        return 'ERROR: invalid path --> '+gcspath
+    
+    # Instantiates a client
+    storage_client = storage.Client()
+
+    # get the bucket
+    bucket = storage_client.get_bucket(gcspath.split('/')[0])
+    
+    # extract the model
     model = 'model.joblib'
     joblib.dump(estimator, model)
-    model_path = os.path.join(gcspath, datetime.datetime.now().strftime('export_%Y%m%d_%H%M%S'), model)
-    subprocess.check_call(['gsutil', '-o', 'GSUtil:parallel_composite_upload_threshold=150M', 'cp', model, model_path])
-    return model_path
+    
+    # save the model
+    model_path = os.path.join('/'.join(gcspath.split('/')[1:]), datetime.datetime.now().strftime('export_%Y%m%d_%H%M%S'), model)
+    blob = bucket.blob(model_path)
+    blob.upload_from_filename(model)
+
+    return 'gs://'+gcspath.split('/')[0]+model_path
