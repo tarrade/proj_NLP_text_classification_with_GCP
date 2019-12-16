@@ -24,24 +24,6 @@ REQUIRED_PACKAGES = ['scikit-learn==0.20',
                      'cloudml-hypertune',
                      'psutil']
 
-#setup(name='trainer',
-#      version='1.0',
-#      description='Stackoverflow with scikit-learn',
-#      author='Google',
-#      author_email='nobody@google.com',
-#      license='Apache2',
-#      packages=['trainer'],
-#      ## WARNING! Do not upload this package to PyPI
-#      ## BECAUSE it contains a private key
-#      package_data={'': ['privatekey.json']},
-#      install_requires=[
-#          'pandas-gbq==0.3.0',
-#          'urllib3',
-#          'google-cloud-bigquery==0.29.0',
-#          'cloudml-hypertune'
-#      ],
-#      zip_safe=False)
-
 setup(
     name='trainer',
     version='0.1',
