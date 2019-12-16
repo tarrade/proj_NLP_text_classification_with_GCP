@@ -101,6 +101,10 @@ RUN cat /etc/group
 # Running some checks
 RUN echo $HOME
 
+# Intall htop
+RUN apt-get update
+RUN apt-get install htop
+
 # set the right permission
 RUN chmod +x /entrypoint.sh
 
