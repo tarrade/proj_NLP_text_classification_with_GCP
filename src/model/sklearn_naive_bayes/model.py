@@ -15,8 +15,10 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
     
     # checking parameters dependencies
     if min_df>=max_df:
+        print('---> min_df>=max_df: skipping')
         return None, 0.0
-    if (max_df-min_df)<0.15:
+    if (max_df-min_df)<0.1:
+        print('---> (max_df-min_df)<0.1: skipping')
         return None, 0.0
     
     # transforming data type from YAML to python
@@ -73,8 +75,11 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
 
             # print mem info
             utils.info_mem(text=' ---> memory info: after TfidfTransformer')
-
-            nb_model = MultinomialNB(alpha=alpha).fit(tfidf_vector, train_y)
+            
+            try:
+                nb_model = MultinomialNB(alpha=alpha).fit(tfidf_vector, train_y)
+            except:
+                print('---> MultinomialNB(alpha=alpha).fit(tfidf_vector, train_y) is crashing ...')    
 
             word_count_vector_eval =cv.transform(eval_X)
             tfidf_vector_eval=tfidf_transformer.transform(word_count_vector_eval)
@@ -83,7 +88,11 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
         pipeline=Pipeline([('Word Embedding', CountVectorizer(max_df=max_df,min_df=min_df)),
                            ('Feature Transform', TfidfTransformer(norm=norm)),
                            ('Classifier', MultinomialNB(alpha=alpha))])
-        pipeline.fit(train_X, train_y)
+        
+        try:
+            pipeline.fit(train_X, train_y)
+        except:
+            print('---> pipeline.fit(train_X, train_y) is crashing ...')
 
         print('the list of steps and parameters in the pipeline\n')
         for k, v in pipeline.named_steps.items():
