@@ -53,30 +53,31 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
     
     if not use_pipeline:
         with parallel_backend('threading', n_jobs=16):
-            print('multiple CPUs')
-            # train
-            cv = CountVectorizer(max_df=max_df,min_df=min_df,max_features=10000).fit(train_X)
-            word_count_vector =cv.transform(train_X)
-            print(' ---> Size CountVectorizer matrix')
-            print('number of row {:,}'.format(word_count_vector.shape[0]))
-            print('number of col {:,}'.format(word_count_vector.shape[1]))
-            voc=cv.vocabulary_
-            voc_list=sorted(voc.items(), key=lambda kv: kv[1], reverse=True)
-            print(' --> length of the vocabulary vector: {:,}'.format(len(cv.get_feature_names())))
-            #print(voc_list)
-
-            # print mem info
-            utils.info_mem(text=' ---> memory info: after CountVectorizer')
-
-            tfidf_transformer= TfidfTransformer(norm=norm).fit(word_count_vector)
-            tfidf_vector=tfidf_transformer.transform(word_count_vector)
-            print('cv tfidf', tfidf_vector.shape)
-            #print(tfidf_vector)
-
-            # print mem info
-            utils.info_mem(text=' ---> memory info: after TfidfTransformer')
-            
+            print('joblib parallel_backend')
             try:
+                # train
+                cv = CountVectorizer(max_df=max_df,min_df=min_df,max_features=10000).fit(train_X)
+                word_count_vector =cv.transform(train_X)
+                print(' ---> Size CountVectorizer matrix')
+                print('number of row {:,}'.format(word_count_vector.shape[0]))
+                print('number of col {:,}'.format(word_count_vector.shape[1]))
+                voc=cv.vocabulary_
+                voc_list=sorted(voc.items(), key=lambda kv: kv[1], reverse=True)
+                print(' --> length of the vocabulary vector: {:,}'.format(len(cv.get_feature_names())))
+                #print(voc_list)
+
+                # print mem info
+                utils.info_mem(text=' ---> memory info: after CountVectorizer')
+
+
+                tfidf_transformer= TfidfTransformer(norm=norm).fit(word_count_vector)
+                tfidf_vector=tfidf_transformer.transform(word_count_vector)
+                print('cv tfidf', tfidf_vector.shape)
+                #print(tfidf_vector)
+                
+                # print mem info
+                utils.info_mem(text=' ---> memory info: after TfidfTransformer')
+            
                 nb_model = MultinomialNB(alpha=alpha).fit(tfidf_vector, train_y)
             except:
                 print('---> MultinomialNB(alpha=alpha).fit(tfidf_vector, train_y) is crashing ...')    
