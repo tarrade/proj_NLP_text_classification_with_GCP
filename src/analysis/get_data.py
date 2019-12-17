@@ -58,13 +58,11 @@ def query_to_dataframe(query, is_training, tags, nb_label):
         print('list of labels to be used\n',keep_tags)
         print('number of labels',len(keep_tags))
         print('max number of labels set',nb_label)
-        
-    #print(df['tags'])
-    df['tags'] = df['tags'].apply(lambda x: build_tag(x, keep_tags))
-    #print(df['tags'])
+    
+    # not needed anymore since we have only 50 labels
+    #df['tags'] = df['tags'].apply(lambda x: build_tag(x, keep_tags))
+
     df['label'] = df['tags'].apply(lambda x: x[0] if len(x)>0 else 'other-tags')
-    #print(df['label'])
-    #df['label'] = df['tags'].apply(lambda row: ",".join(row))
     del df['tags']
     
     #print('list tags {}'.format(df['label'].unique()))
