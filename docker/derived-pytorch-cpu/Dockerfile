@@ -6,6 +6,10 @@ RUN cat /etc/os-release
 RUN lsb_release -a
 RUN uname -r
 
+# Install htop
+RUN apt-get update
+RUN apt-get install htop
+
 # Checking that the right shell is used in the image the build and later when the container is launched from the image
 RUN echo $0
 # active in the shell
