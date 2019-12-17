@@ -1,4 +1,3 @@
-import os
 import psutil
 
 def info_cpu():

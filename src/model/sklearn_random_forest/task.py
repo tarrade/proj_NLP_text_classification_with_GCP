@@ -1,8 +1,8 @@
 import argparse
 import hypertune
-import os
 
 import model.sklearn_random_forest.model as model
+import utils.model_utils as model_utils
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -75,7 +75,7 @@ if __name__ == '__main__':
                                                    arguments['M_alpha'],
                                                    arguments['max_nb_label'])
     
-    loc = model.save_model(estimator, 
+    loc = model_utils.save_model(estimator, 
                            arguments['job_dir'], 'stackoverlow')
     print("Saved model to {}".format(loc))
     

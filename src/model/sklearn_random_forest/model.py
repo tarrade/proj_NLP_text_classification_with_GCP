@@ -1,18 +1,4 @@
-import os
-import psutil
-import subprocess
-import datetime
-import joblib
-import re
-from collections import Counter
-import operator
-import copy
-import pprint
 from joblib import parallel_backend
-import google.cloud.bigquery as bigquery
-from google.cloud import storage
-import pandas as pd
-import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, TfidfTransformer
@@ -23,124 +9,7 @@ from sklearn.metrics import (
     accuracy_score
 )
 import utils.memory_utils as utils
-
-def create_queries(eval_size):
-    
-    query = """
-    SELECT
-      *
-    FROM
-      `nlp-text-classification.stackoverflow.posts_preprocessed`    
-    """
-    
-    eval_query = "{} WHERE MOD(ABS(FARM_FINGERPRINT(CAST(id as STRING))),100) < {}".format(query, eval_size)
-    train_query  = "{} WHERE MOD(ABS(FARM_FINGERPRINT(CAST(id as STRING))),100)>= {}".format(query, eval_size)
-  
-    return train_query, eval_query
-    
-def create_queries_subset(eval_size):
-    query = """
-    SELECT
-      *
-    FROM
-      `nlp-text-classification.stackoverflow.posts_preprocessed_selection_subset`
-    """
-    
-    eval_query = "{} WHERE MOD(ABS(FARM_FINGERPRINT(CAST(id as STRING))),100) < {}".format(query, eval_size)
-    train_query  = "{} WHERE MOD(ABS(FARM_FINGERPRINT(CAST(id as STRING))),100)>= {}".format(query, eval_size)
-  
-    return train_query, eval_query
-
-def build_tag(row, list_tags):
-    new_list=[]
-    for idx, val in enumerate(row):
-        if val in list_tags:
-            new_list.append(val)
-    del row
-    return new_list
-
-def query_to_dataframe(query, is_training, tags, nb_label):
-    
-    client = bigquery.Client()
-    df = client.query(query).to_dataframe()
-    
-    # label
-    if is_training:
-        tags=df['tags'].sum()
-        unique_tags = dict(Counter(tags))
-        unique_tags = sorted(unique_tags.items(), key=operator.itemgetter(1))
-        unique_tags.reverse()
-        max_nb_label=len(unique_tags)+1
-        if nb_label>max_nb_label: nb_label=max_nb_label
-        keep_tags=[x[0] for x in unique_tags][0:nb_label]
-    else:
-        keep_tags=tags
-    
-    if is_training:
-        print('list of labels to be used\n',keep_tags)
-        print('number of labels',len(keep_tags))
-        print('max number of labels set',nb_label)
-        
-    #print(df['tags'])
-    df['tags'] = df['tags'].apply(lambda x: build_tag(x, keep_tags))
-    #print(df['tags'])
-    df['label'] = df['tags'].apply(lambda x: x[0] if len(x)>0 else 'other-tags')
-    #print(df['label'])
-    #df['label'] = df['tags'].apply(lambda row: ",".join(row))
-    del df['tags']
-    
-    #print('list tags {}'.format(df['label'].unique()))
-    
-    # features
-    df['text'] = df['title'] + df['text_body'] + df['code_body']
-    del df['code_body']
-    del df['title']
-    del df['text_body']
-    
-    # use BigQuery index
-    df.set_index('id',inplace=True)
-    
-    return keep_tags, df
-
-
-def create_dataframes(frac, eval_size, nb_label):   
-
-    # split in df in training and testing
-    #train_df, eval_df = train_test_split(df, test_size=0.2, random_state=101010)
-    
-    # small dataset for testing
-    if frac > 0 and frac < 1:
-        sample = " AND RAND() < {}".format(frac)
-    else:
-        sample = ""
-
-    train_query, eval_query = create_queries(eval_size)
-    train_query = "{} {}".format(train_query, sample)
-    eval_query =  "{} {}".format(eval_query, sample)
-    
-    keep_tags,train_df = query_to_dataframe(train_query, True, '', nb_label)
-    _, eval_df = query_to_dataframe(eval_query, False, keep_tags, nb_label)
-    
-    print('size of the training set          : {:,}'.format(len(train_df )))
-    print('size of the evaluation set        : {:,}'.format(len(eval_df)))
-    
-    print('number of labels in training set  : {}'.format(len(train_df['label'].unique())))
-    print('number of labels in evaluation set: {}'.format(len(eval_df['label'].unique())))
-    #print('\nlist tags training  : {}'.format(train_df['label'].unique()))
-    #print('\nlist tags evaluation: {}'.format(eval_df['label'].unique()))
-                                                              
-    return train_df, eval_df
-
-
-def input_fn(df):
-    #df = copy.deepcopy(input_df)
-    
-    # features, label
-    label = df['label']
-    del df['label']
-    
-    features = df['text']
-    return features, label
+import analysis.get_data as get_data
 
 def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
     
@@ -159,12 +28,12 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
     if min_df==1.0: min_df=1
     
     # get data
-    train_df, eval_df = create_dataframes(frac, eval_size, nb_label)
+    train_df, eval_df = get_data.create_dataframes(frac, eval_size, nb_label)
     utils.mem_df(train_df, text='\n---> memory training dataset')
     utils.mem_df(eval_df, text='\n---> memory evalution dataset')
 
-    train_X, train_y = input_fn(train_df)
-    eval_X, eval_y = input_fn(eval_df)
+    train_X, train_y = get_data.input_fn(train_df)
+    eval_X, eval_y = get_data.input_fn(eval_df)
     
     del train_df
     del eval_df
@@ -309,27 +178,3 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
         return nb_model, acc_eval
     else:
         return pipeline, acc_eval
-    
-def save_model(estimator, gcspath, name):
-    
-    gcspath = re.sub('^gs:\/\/', '', gcspath)
-    
-    if len(gcspath.split('/'))<2:
-        return 'ERROR: invalid path --> '+gcspath
-    
-    # Instantiates a client
-    storage_client = storage.Client()
-
-    # get the bucket
-    bucket = storage_client.get_bucket(gcspath.split('/')[0])
-    
-    # extract the model
-    model = 'model.joblib'
-    joblib.dump(estimator, model)
-    
-    # save the model
-    model_path = os.path.join('/'.join(gcspath.split('/')[1:]), datetime.datetime.now().strftime('export_%Y%m%d_%H%M%S'), model)
-    blob = bucket.blob(model_path)
-    blob.upload_from_filename(model)
-
-    return 'gs://'+gcspath.split('/')[0]+model_path
