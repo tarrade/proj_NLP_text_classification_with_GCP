@@ -11,12 +11,12 @@ trainingInput:
     params:
     - parameterName: WE_max_df
       type: DOUBLE
-      minValue: 1.0
+      minValue: 0.0
       maxValue: 1.0
       scaleType: UNIT_LINEAR_SCALE
     - parameterName: WE_min_df
       type: DOUBLE
-      minValue: 1.0
+      minValue: 0.0
       maxValue: 1.0
       scaleType: UNIT_LINEAR_SCALE
     - parameterName: FT_norm
