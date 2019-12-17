@@ -37,12 +37,6 @@ if __name__ == '__main__':
         default=1
     )        
     parser.add_argument(
-        '--FT_norm',
-        help='Unit norm',
-        type=str,
-        default='l2'       
-    ) 
-    parser.add_argument(
         '--project_id',
         help='ID (not name) of your project',
         required=True
@@ -65,7 +59,6 @@ if __name__ == '__main__':
                                                    arguments['frac'],
                                                    arguments['WE_max_df'],
                                                    arguments['WE_min_df'],
-                                                   arguments['FT_norm'],
                                                    arguments['max_nb_label'])
     
     loc = model.save_model(estimator, 
