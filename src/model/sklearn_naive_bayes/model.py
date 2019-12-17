@@ -13,6 +13,14 @@ import analysis.get_data as get_data
 
 def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
     
+    # checking parameters dependencies
+    if min_df>=max_df:
+        return None, None
+    
+    # transforming data type from YAML to python
+    if norm=='None': norm=None     
+    if min_df==1.0: min_df=1
+    
     # print cpu info
     print('\n---> CPU ')
     utils.info_cpu()
@@ -21,11 +29,7 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
     utils.info_details_mem(text='---> details memory info: start')
     
     # print mem info
-    utils.info_mem(text=' ---> memory info: start')
-    
-    # transforming data type from YAML to python
-    if norm=='None': norm=None 
-    if min_df==1.0: min_df=1
+    utils.info_mem(text=' ---> memory info: start') 
     
     # get data
     train_df, eval_df = get_data.create_dataframes(frac, eval_size, nb_label)

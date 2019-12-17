@@ -72,9 +72,10 @@ if __name__ == '__main__':
                                                    arguments['M_alpha'],
                                                    arguments['max_nb_label'])
     
-    loc = model_utils.save_model(estimator, 
-                           arguments['job_dir'], 'stackoverlow')
-    print("Saved model to {}".format(loc))
+    if estimator is not None:
+        loc = model_utils.save_model(estimator, 
+                               arguments['job_dir'], 'stackoverlow')
+        print("Saved model to {}".format(loc))
     
     # this is for hyperparameter tuning
     hpt = hypertune.HyperTune()
