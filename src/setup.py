@@ -25,7 +25,7 @@ REQUIRED_PACKAGES = ['scikit-learn==0.20',
                      'psutil']
 
 setup(
-    name='text_classification',
+    name='model',
     version='0.1',
     author = 'F. Tarrade',
     author_email = 'fabien.tarrade@gmail.com',
