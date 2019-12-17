@@ -1,7 +1,7 @@
 import argparse
 import hypertune
 
-import model.sklearn_random_forest.model as model
+import model.sklearn_naive_bayes.model as model
 import utils.model_utils as model_utils
 
 if __name__ == '__main__':
