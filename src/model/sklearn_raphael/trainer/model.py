@@ -62,25 +62,6 @@ def query_to_dataframe(query, is_training, tags, nb_label):
     client = bigquery.Client()
     df = client.query(query).to_dataframe()
     
-    # label
-    if is_training:
-        tags=df['tags'].sum()
-        unique_tags = dict(Counter(tags))
-        unique_tags = sorted(unique_tags.items(), key=operator.itemgetter(1))
-        unique_tags.reverse()
-        max_nb_label=len(unique_tags)+1
-        if nb_label>max_nb_label: nb_label=max_nb_label
-        keep_tags=[x[0] for x in unique_tags][0:nb_label]
-    else:
-        keep_tags=tags
-    
-    if is_training:
-        print('list of labels to be used\n',keep_tags)
-        print('number of labels',len(keep_tags))
-        print('max number of labels set',nb_label)
-        
-    #print(df['tags'])
-    df['tags'] = df['tags'].apply(lambda x: build_tag(x, keep_tags))
     #print(df['tags'])
     df['label'] = df['tags'].apply(lambda x: x[0] if len(x)>0 else 'other-tags')
     #print(df['label'])
@@ -95,6 +76,8 @@ def query_to_dataframe(query, is_training, tags, nb_label):
     
     # use BigQuery index
     df.set_index('id',inplace=True)
+    
+    keep_tags= ''
     
     return keep_tags, df
 
@@ -113,8 +96,8 @@ def create_dataframes(frac, eval_size, nb_label):
     train_query = "{} {}".format(train_query, sample)
     eval_query =  "{} {}".format(eval_query, sample)
     
-    keep_tags,train_df = query_to_dataframe(train_query, True, '', nb_label)
-    _, eval_df = query_to_dataframe(eval_query, False, keep_tags, nb_label)
+    _, train_df = query_to_dataframe(train_query, True, '', nb_label)
+    _, eval_df = query_to_dataframe(eval_query, False, '', nb_label)
     
     print('size of the training set          : {:,}'.format(len(train_df )))
     print('size of the evaluation set        : {:,}'.format(len(eval_df)))
@@ -135,7 +118,7 @@ def input_fn(df):
     features = df['text']
     return features, label
 
-def train_and_evaluate(eval_size, frac, max_df, min_df, norm, nb_label):
+def train_and_evaluate(eval_size, frac, max_df, min_df, nb_label):
     
     # print cpu info
     print('\n---> CPU ')
@@ -148,7 +131,6 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, nb_label):
     utils.info_mem(text=' ---> memory info: start')
     
     # transforming data type from YAML to python
-    if norm=='None': norm=None 
     if min_df==1.0: min_df=1
     
     # get data
@@ -169,10 +151,9 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, nb_label):
     # train
     estimators = [
     ('tfidf', TfidfVectorizer(tokenizer=lambda string: string.split(),
-                              norm=norm,
                               min_df=min_df, 
                               max_df=max_df,
-                              max_features=10000)),
+                              ngram_range=(1,1))),
     ('clf', RandomForestClassifier(n_jobs=-1, class_weight='balanced'))
     ]
     

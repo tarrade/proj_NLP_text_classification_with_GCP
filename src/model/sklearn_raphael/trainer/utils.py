@@ -43,4 +43,3 @@ def mem_details_df(df, text=''):
     conv=1024**3
     print('### Memory dataframe:')
     print(df.info(memory_usage="deep"))
-        
