@@ -79,11 +79,12 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
                 utils.info_mem(text=' ---> memory info: after TfidfTransformer')
             
                 nb_model = MultinomialNB(alpha=alpha).fit(tfidf_vector, train_y)
+                
+                word_count_vector_eval =cv.transform(eval_X)
+                tfidf_vector_eval=tfidf_transformer.transform(word_count_vector_eval)
             except:
                 print('---> MultinomialNB(alpha=alpha).fit(tfidf_vector, train_y) is crashing ...')    
-
-            word_count_vector_eval =cv.transform(eval_X)
-            tfidf_vector_eval=tfidf_transformer.transform(word_count_vector_eval)
+                return None, 0.0
 
     else:
         pipeline=Pipeline([('Word Embedding', CountVectorizer(max_df=max_df,min_df=min_df)),
@@ -94,6 +95,7 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
             pipeline.fit(train_X, train_y)
         except:
             print('---> pipeline.fit(train_X, train_y) is crashing ...')
+            return None, 0.0
 
         print('the list of steps and parameters in the pipeline\n')
         for k, v in pipeline.named_steps.items():
