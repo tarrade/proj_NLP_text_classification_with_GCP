@@ -18,9 +18,10 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import (
     classification_report,
     confusion_matrix,
-    accuracy_score
+    accuracy_score,
+    balanced_accuracy_score
 )
-import src.model.sklearn_raphael.trainer.utils as utils
+import trainer.utils as utils
 
 def create_queries(eval_size):
     
@@ -154,7 +155,9 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, nb_label):
                               min_df=min_df, 
                               max_df=max_df,
                               ngram_range=(1,1))),
-    ('clf', RandomForestClassifier(n_jobs=-1, class_weight='balanced'))
+    ('clf', RandomForestClassifier(n_estimators=100,
+                                   class_weight='balanced',
+                                   n_jobs=-1))
     ]
     
     p = Pipeline(estimators)
@@ -166,7 +169,7 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, nb_label):
     
     
     # define the score we want to use to evaluate the classifier on
-    acc_eval = accuracy_score(eval_y,eval_y_pred)
+    acc_eval = balanced_accuracy_score(eval_y,eval_y_pred)
     
     # print mem info
     utils.info_mem(text='---> memory info: after model evaluation')

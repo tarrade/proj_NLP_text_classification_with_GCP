@@ -68,6 +68,6 @@ if __name__ == '__main__':
     # this is for hyperparameter tuning
     hpt = hypertune.HyperTune()
     hpt.report_hyperparameter_tuning_metric(
-        hyperparameter_metric_tag='accuracy',
+        hyperparameter_metric_tag='balanced_accuracy',
         metric_value=acc_eval,
         global_step=0)
