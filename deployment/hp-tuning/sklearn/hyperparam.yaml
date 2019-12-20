@@ -1,5 +1,5 @@
 trainingInput:
-  scaleTier: STANDARD_1
+  scaleTier: BASIC
   hyperparameters:
     algorithm: ALGORITHM_UNSPECIFIED
     goal: MAXIMIZE
