@@ -1,8 +1,8 @@
 from setuptools import find_packages
 from setuptools import setup
 
-REQUIRED_PACKAGES = ['scikit-learn==0.20',
-                     'numpy>=1.14.0',
+REQUIRED_PACKAGES = ['scikit-learn==0.22',
+                     'numpy==1.17.2',
                      'google-cloud-bigquery==1.22.0',
                      'google-cloud-dns==0.31.0',
                      'google-cloud-resource-manager==0.30.0',
@@ -21,8 +21,8 @@ REQUIRED_PACKAGES = ['scikit-learn==0.20',
                      'google-cloud==0.34.0',
                      'google-cloud-trace==0.23.0',
                      'google-api-core==1.14.3',
-                     'cloudml-hypertune',
-                     'psutil']
+                     'cloudml-hypertune==0.1.0.dev6',
+                     'psutil==5.6.7']
 
 setup(
     name='model',
