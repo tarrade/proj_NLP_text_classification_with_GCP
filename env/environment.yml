@@ -51,29 +51,28 @@ dependencies:
 - autopep8=1.4.4
 - pep8=1.7.1
 - pylama=7.7.1
-# gcp client libraries
-- google-cloud-storage=1.23.0
-- google-cloud-bigquery=1.22.0
-- google-auth=1.6.3
+# gcp client libraries [check beam-sdk for gcp dependency] https://beam.apache.org/documentation/sdks/python-dependencies/
+- google-cloud-storage=1.23.0 #apache-beam[gcp]==2.16.0
+- google-cloud-bigquery=1.17.0 #apache-beam[gcp]==2.16.0
+- google-auth=1.10.0
 - google-api-core=1.15
-- google-api-python-client=1.7.11
-- google-auth-httplib2=0.0.3
-- google-cloud-core=1.0.3
-- google-cloud-datastore=1.10.0
+#- google-api-python-client=1.7.11
+#- google-auth-httplib2=0.0.3
+#- google-cloud-core=1.1.0
 - google-cloud-language=1.3.0
-- google-pasta=0.1.7
+#- google-pasta=0.1.7
 - google-resumable-media=0.5.0
-- googleapis-common-protos=1.6.0
+#- googleapis-common-protos=1.6.0
 - google-cloud-storage=1.23.0
 - pip:
   # data processing
   - apache-beam[gcp]==2.16.0
   - bs4==0.0.1
-  # data visualization
+  ## data visualization
   - facets-overview==1.0.0
   - pandas-profiling==2.3.0
   - chart-studio==1.0.0
-  # machine learning
+  ## machine learning
   - scikit-multilearn==0.2.0
   - xgboost==0.90
   - tensorflow==2.0.0
@@ -84,11 +83,11 @@ dependencies:
   - tensorflow_io
   - tensorflow-addons==0.6.0
   - cloudml-hypertune==0.1.0.dev6
-  # machine learning - nlp
+  ## machine learning - nlp
   - bert-tensorflow==1.0.1
-  # machine learning - nlp
-  #- "git+https://github.com/tarrade/cutter-ng.git#egg=cutter-ng"
-  - "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.1.0/en_core_web_sm-2.1.0.tar.gz#egg=en_core_web_sm==2.1.0"
+  ## machine learning - nlp
+  ##- "git+https://github.com/tarrade/cutter-ng.git#egg=cutter-ng"
+  - "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.2.5/en_core_web_sm-2.2.5.tar.gz#egg=en_core_web_sm==2.2.5"
   #- "https://github.com/explosion/spacy-models/releases/download/en_core_web_md-2.1.0/en_core_web_md-2.1.0.tar.gz#egg=en_core_web_md==2.1.0"
   #- "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-2.1.0/en_core_web_lg-2.1.0.tar.gz#egg=en_core_web_lg==2.1.0"
   #- "https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-2.1.0/de_core_news_sm-2.1.0.tar.gz#egg=de_core_news_sm==2.1.0"
@@ -98,7 +97,7 @@ dependencies:
   #- tfx==0.14.0
   # gcp client libraries
   - google-cloud-dlp==0.12.1
-  - google-cloud-pubsub==1.0.2
+  - google-cloud-pubsub==1.0.2 #apache-beam[gcp]==2.16.0
   - google-cloud-videointelligence==1.11.0
   - google-cloud-logging==1.14.0
   - google-cloud-dns==0.31.0
@@ -106,11 +105,21 @@ dependencies:
   - google-cloud-speech==1.3.1
   - google-cloud-vision==0.41.0
   - google-cloud-firestore==1.6.0
-  - google-cloud-bigtable==1.2.0
+  - google-cloud-bigtable==1.0.0 #apache-beam[gcp]==2.16.0
   - google-cloud-translate==2.0.0
   - google-cloud-spanner==1.13.0
   - google-cloud-error-reporting==0.33.0
   - google-cloud-monitoring==0.34.0
   - google-cloud==0.34.0
   - google-cloud-trace==0.23.0
+  - google-cloud-datastore==1.7.4
   #- git+https://github.com/taynaud/python-louvain.git@networkx2
+  
+# dependency beam 2.16.0
+#google-apitools>=0.5.28,<0.5.29
+#google-cloud-bigquery>=1.6.0,<1.18.0
+#google-cloud-bigtable>=0.31.1,<1.1.0
+#google-cloud-core>=0.28.1,<2
+#google-cloud-datastore>=1.7.1,<1.8.0
+#google-cloud-pubsub>=0.39.0,<1.1.0
+#googledatastore>=7.0.1,<7.1; python_version < "3.0"
