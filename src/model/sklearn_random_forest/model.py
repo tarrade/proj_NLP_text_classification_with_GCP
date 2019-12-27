@@ -6,21 +6,21 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import balanced_accuracy_score
 
-import utils.memory_utils as utils
-import utils.model_utils
+import utils.memory_utils as mem_utils
+import utils.model_utils as model_utils
 import analysis.get_data as get_data
 
 def train_and_evaluate(eval_size, frac, max_df, min_df, norm, ngram_range, nb_label):
     
     # print cpu info
     print('\n---> CPU ')
-    utils.info_cpu()
+    mem_utils.info_cpu()
     
     # print mem info
-    utils.info_details_mem(text='---> details memory info: start')
+    mem_utils.info_details_mem(text='---> details memory info: start')
     
     # print mem info
-    utils.info_mem(text=' ---> memory info: start')
+    mem_utils.info_mem(text=' ---> memory info: start')
     
     # transforming data type from YAML to python
     if norm=='None': norm=None 
@@ -28,8 +28,8 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, ngram_range, nb_la
     
     # get data
     train_df, eval_df = get_data.create_dataframes(frac, eval_size, nb_label)
-    utils.mem_df(train_df, text='\n---> memory training dataset')
-    utils.mem_df(eval_df, text='\n---> memory evalution dataset')
+    mem_utils.mem_df(train_df, text='\n---> memory training dataset')
+    mem_utils.mem_df(eval_df, text='\n---> memory evalution dataset')
 
     train_X, train_y = get_data.input_fn(train_df)
     eval_X, eval_y = get_data.input_fn(eval_df)
@@ -38,7 +38,7 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, ngram_range, nb_la
     del eval_df
     
     # print mem info
-    utils.info_mem(text='\n---> memory info: after creation dataframe')
+    mem_utils.info_mem(text='\n---> memory info: after creation dataframe')
     
     
     estimators = [
@@ -64,11 +64,11 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, ngram_range, nb_la
     eval_y_pred = p.predict(eval_X)
     train_y_pred = p.predict(train_X)
     
-    loc = model_utils.save_model(estimator, 
+    loc = model_utils.save_model(p, 
                                  arguments['job_dir'], 'stackoverlow')
     print("Saved model to {}".format(loc))
     # print mem info
-    utils.info_mem(text=' ---> memory info: after model training')
+    mem_utils.info_mem(text=' ---> memory info: after model training')
     
     
     # define the score we want to use to evaluate the classifier on
@@ -76,7 +76,7 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, ngram_range, nb_la
     acc_train = balanced_accuracy_score(train_y, train_y_pred)
     
     # print mem info
-    utils.info_mem(text='---> memory info: after model evaluation')
+    mem_utils.info_mem(text='---> memory info: after model evaluation')
     
     print('accuracy on test set: \n {} % \n'.format(acc_eval))
     print('accuracy on train set: \n {} % \n'.format(acc_train))

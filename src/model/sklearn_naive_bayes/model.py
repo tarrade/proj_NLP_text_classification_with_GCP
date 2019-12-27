@@ -8,7 +8,7 @@ from sklearn.metrics import (
     confusion_matrix,
     accuracy_score
 )
-import utils.memory_utils as utils
+import utils.memory_utils as mem_utils
 import analysis.get_data as get_data
 
 def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
@@ -27,18 +27,18 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
     
     # print cpu info
     print('\n---> CPU ')
-    utils.info_cpu()
+    mem_utils.info_cpu()
     
     # print mem info
-    utils.info_details_mem(text='---> details memory info: start')
+    mem_utils.info_details_mem(text='---> details memory info: start')
     
     # print mem info
-    utils.info_mem(text=' ---> memory info: start') 
+    mem_utils.info_mem(text=' ---> memory info: start') 
     
     # get data
     train_df, eval_df = get_data.create_dataframes(frac, eval_size, nb_label)
-    utils.mem_df(train_df, text='\n---> memory training dataset')
-    utils.mem_df(eval_df, text='\n---> memory evalution dataset')
+    mem_utils.mem_df(train_df, text='\n---> memory training dataset')
+    mem_utils.mem_df(eval_df, text='\n---> memory evalution dataset')
 
     train_X, train_y = get_data.input_fn(train_df)
     eval_X, eval_y = get_data.input_fn(eval_df)
@@ -47,7 +47,7 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
     del eval_df
     
     # print mem info
-    utils.info_mem(text='\n---> memory info: after creation dataframe')
+    mem_utils.info_mem(text='\n---> memory info: after creation dataframe')
     
     use_pipeline = False
     
@@ -67,7 +67,7 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
                 #print(voc_list)
 
                 # print mem info
-                utils.info_mem(text=' ---> memory info: after CountVectorizer')
+                mem_utils.info_mem(text=' ---> memory info: after CountVectorizer')
 
 
                 tfidf_transformer= TfidfTransformer(norm=norm).fit(word_count_vector)
@@ -76,7 +76,7 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
                 #print(tfidf_vector)
                 
                 # print mem info
-                utils.info_mem(text=' ---> memory info: after TfidfTransformer')
+                mem_utils.info_mem(text=' ---> memory info: after TfidfTransformer')
             
                 nb_model = MultinomialNB(alpha=alpha).fit(tfidf_vector, train_y)
                 
@@ -162,7 +162,7 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
                 print(' --- ') 
         
     # print mem info
-    utils.info_mem(text=' ---> memory info: after model training')
+    mem_utils.info_mem(text=' ---> memory info: after model training')
 
     # evaluate
     if not use_pipeline:
@@ -187,7 +187,7 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
     del eval_X
     
     # print mem info
-    utils.info_mem(text='---> memory info: after model evaluation')
+    mem_utils.info_mem(text='---> memory info: after model evaluation')
     
     print('accuracy on test set: \n {} % \n'.format(acc_eval))
     print('accuracy on train set: \n {} % \n'.format(acc_train))
