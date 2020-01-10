@@ -14,12 +14,12 @@ import analysis.get_data as get_data
 def train_and_evaluate(eval_size, frac, max_df, min_df, norm, alpha, nb_label):
     
     # checking parameters dependencies
-    if min_df>=max_df:
-        print('---> min_df>=max_df: skipping')
-        return None, 0.0
-    if (max_df-min_df)<0.1:
-        print('---> (max_df-min_df)<0.1: skipping')
-        return None, 0.0
+    #if min_df>max_df:
+    #    print('---> min_df>=max_df: skipping')
+    #    return None, 0.0
+    #if (max_df-min_df)<0.1:
+    #    print('---> (max_df-min_df)<0.1: skipping')
+    #    return None, 0.0
     
     # transforming data type from YAML to python
     if norm=='None': norm=None     

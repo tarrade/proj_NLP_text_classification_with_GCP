@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import balanced_accuracy_score
 
 import utils.memory_utils as mem_utils
-import utils.model_utils as model_utils
+#import utils.model_utils as model_utils
 import analysis.get_data as get_data
 
 def train_and_evaluate(eval_size, frac, max_df, min_df, norm, ngram_range, nb_label):
@@ -64,9 +64,10 @@ def train_and_evaluate(eval_size, frac, max_df, min_df, norm, ngram_range, nb_la
     eval_y_pred = p.predict(eval_X)
     train_y_pred = p.predict(train_X)
     
-    loc = model_utils.save_model(p, 
-                                 arguments['job_dir'], 'stackoverlow')
-    print("Saved model to {}".format(loc))
+    #loc = model_utils.save_model(p, 
+    #                             arguments['job_dir'], 'stackoverlow')
+    #print("Saved model to {}".format(loc))
+    
     # print mem info
     mem_utils.info_mem(text=' ---> memory info: after model training')
     
