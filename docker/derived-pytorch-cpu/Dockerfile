@@ -1,5 +1,6 @@
 # Specify the base image and tag
-FROM gcr.io/deeplearning-platform-release/pytorch-cpu:m34
+#FROM gcr.io/deeplearning-platform-release/pytorch-cpu:m34
+FROM gcr.io/deeplearning-platform-release/pytorch-cpu:m40
 
 # Checking the type of machine
 RUN cat /etc/os-release
