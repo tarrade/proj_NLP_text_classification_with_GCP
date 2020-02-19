@@ -29,6 +29,7 @@ This will provide you a unique list of python packages needed to run the code
 ## Use JupyterLab   
 - create the python conda env to run Jupyter Lab (or Jupyter Notebook)   
   ```conda env create -f env/jupyter-notebook.yml```    
+  (you should have nodejs installed with conda)  
 
 - activate the env  
   ```conda activate jupyter-notebook```  
